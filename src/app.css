@@ -1,0 +1,369 @@
+/* ==========================================================================
+   ORU — Minimalist iOS & Dribbble Design System
+   Clean, Apple-inspired, High-Clarity Mobile Interface
+   ========================================================================== */
+
+:root {
+  /* Apple iOS Palette */
+  --ios-bg: #F2F2F7;
+  --ios-card: #FFFFFF;
+  --ios-separator: #E5E5EA;
+  --ios-fill: #E5E5EA;
+  --ios-fill-secondary: #EBEBF0;
+  
+  /* Text */
+  --text-primary: #000000;
+  --text-secondary: #3C3C43;
+  --text-muted: #8E8E93;
+  --text-subtle: #C7C7CC;
+
+  /* Accent */
+  --accent-black: #000000;
+  --accent-emerald: #34C759;
+  --accent-red: #FF3B30;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.06);
+
+  /* Radii */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+
+  /* Font */
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Plus Jakarta Sans", Roboto, sans-serif;
+  --max-width: 720px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background-color: var(--ios-bg);
+}
+
+body {
+  background-color: var(--ios-bg);
+  color: var(--text-primary);
+  font-family: var(--font-system);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* App Wrapper */
+.oru-app-wrapper {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--ios-bg);
+  padding-bottom: 120px;
+}
+
+/* Dietary Icons */
+.icon-veg {
+  color: var(--accent-emerald);
+}
+
+.icon-nonveg {
+  color: var(--accent-red);
+}
+
+/* ==========================================================================
+   Apple iOS / macOS Action Buttons & Steppers
+   - Authentic continuous pill roundness (border-radius: 9999px)
+   - Tactile hardware depth (subtle top specular border, elevation shadows)
+   - Guaranteed pure white typography (no link/visited blue tint)
+   - Translucent glass price capsule badges
+   - Haptic spring compression (:active scale 0.975)
+   ========================================================================== */
+
+.btn-apple-primary {
+  position: relative;
+  background: linear-gradient(180deg, #1C1C1E 0%, #000000 100%);
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-pill); /* Authentic Apple Pill Roundness */
+  min-height: 52px;
+  height: 52px;
+  padding: 0 20px;
+  font-family: var(--font-system);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.015em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.24),
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 0.28);
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.16s cubic-bezier(0.16, 1, 0.3, 1), 
+              filter 0.16s ease,
+              opacity 0.16s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.btn-apple-primary *,
+.btn-apple-primary span,
+.btn-apple-primary a {
+  color: #FFFFFF !important; /* Strictly enforce white text, no default blue */
+  text-decoration: none !important;
+}
+
+.btn-apple-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.16),
+    inset 0 1px 1px rgba(255, 255, 255, 0.36);
+}
+
+.btn-apple-primary:active {
+  transform: scale(0.975);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  filter: brightness(0.92);
+}
+
+.btn-apple-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-apple-primary .btn-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  color: #FFFFFF !important;
+}
+
+.btn-apple-primary .btn-price-badge {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-pill);
+  padding: 5px 13px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #FFFFFF !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.btn-apple-primary.btn-apple-center {
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Apple Secondary Pill Button */
+.btn-apple-secondary {
+  background: var(--ios-fill-secondary);
+  color: var(--text-primary) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-pill);
+  min-height: 44px;
+  padding: 0 20px;
+  font-family: var(--font-system);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease;
+  user-select: none;
+}
+
+.btn-apple-secondary:active {
+  transform: scale(0.97);
+  background: var(--ios-fill);
+}
+
+/* Tactile iOS Pill Stepper */
+.ios-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: #000000;
+  color: #FFFFFF;
+  border-radius: var(--radius-pill);
+  height: 34px;
+  padding: 0 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0.5px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.ios-stepper button {
+  background: none;
+  border: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.ios-stepper button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ios-stepper button:active {
+  transform: scale(0.86);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.ios-stepper span {
+  font-size: 0.86rem;
+  font-weight: 700;
+  min-width: 22px;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+/* Large Stepper for Sheet Footers */
+.ios-stepper.stepper-sheet {
+  height: 52px;
+  padding: 0 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+.ios-stepper.stepper-sheet button {
+  width: 40px;
+  height: 40px;
+}
+
+.ios-stepper.stepper-sheet span {
+  font-size: 1.05rem;
+  font-weight: 700;
+  min-width: 32px;
+}
+
+/* Clean App Store Pill "+ ADD" Button */
+.btn-ios-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #FFFFFF;
+  color: #000000;
+  border: 1.5px solid #000000;
+  border-radius: var(--radius-pill);
+  height: 32px;
+  padding: 0 14px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+}
+
+.btn-ios-add:hover {
+  background: #000000;
+  color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-ios-add:active {
+  transform: scale(0.92);
+  background: #000000;
+  color: #FFFFFF;
+}
+
+/* Sticky Bottom Order Bar */
+.ios-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 900;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 0.5px solid var(--ios-separator);
+  padding: 14px 16px;
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.bottom-bar-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.btn-apple-small {
+  min-height: 48px;
+  height: 48px;
+  padding: 0 20px;
+  width: auto;
+  flex: 1;
+  max-width: 220px;
+}
+
+/* Modal and Drawer Backdrop */
+.ios-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .ios-backdrop {
+    align-items: center;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

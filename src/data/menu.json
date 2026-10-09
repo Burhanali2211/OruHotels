@@ -1,0 +1,162 @@
+{
+  "restaurant": {
+    "name": "DiamondCafe",
+    "subtitle": "Dining & Kitchen",
+    "table": "Table 08"
+  },
+  "categories": [
+    { "id": "all", "name": "All Dishes" },
+    { "id": "starters", "name": "Starters" },
+    { "id": "mains", "name": "Mains" },
+    { "id": "breads", "name": "Breads & Rice" },
+    { "id": "desserts", "name": "Desserts" },
+    { "id": "drinks", "name": "Drinks" }
+  ],
+  "dishes": [
+    {
+      "id": "paneer-tikka",
+      "name": "Smoked Malai Paneer",
+      "category": "starters",
+      "price": 380,
+      "diet": "veg",
+      "popular": true,
+      "description": "Char-grilled cottage cheese marinated in clotted cream, black garlic, and cracked pepper.",
+      "image": "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=800&q=80",
+      "spiceLevels": ["Mild", "Medium", "Spicy"]
+    },
+    {
+      "id": "chicken-seekh",
+      "name": "Chicken Seekh Kebab",
+      "category": "starters",
+      "price": 420,
+      "diet": "nonveg",
+      "popular": true,
+      "description": "Flame-roasted minced chicken skewers with fresh herbs, mint chutney, and spices.",
+      "image": "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80",
+      "spiceLevels": ["Medium", "Spicy"]
+    },
+    {
+      "id": "crispy-corn",
+      "name": "Crispy Pepper Corn",
+      "category": "starters",
+      "price": 280,
+      "diet": "veg",
+      "popular": false,
+      "description": "Golden sweet corn wok-tossed with spring onions, kaffir lime, and sea salt.",
+      "image": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "curry-leaf-chicken",
+      "name": "Curry Leaf Pepper Chicken",
+      "category": "starters",
+      "price": 390,
+      "diet": "nonveg",
+      "popular": false,
+      "description": "Tender chicken tossed with roasted garlic, cracked Tellicherry pepper, and crispy curry leaves.",
+      "image": "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "butter-chicken",
+      "name": "Butter Chicken",
+      "category": "mains",
+      "price": 460,
+      "diet": "nonveg",
+      "popular": true,
+      "description": "Smoked tandoori chicken simmered in rich tomato gravy with fresh butter and fenugreek.",
+      "image": "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80",
+      "spiceLevels": ["Mild", "Medium", "Spicy"]
+    },
+    {
+      "id": "mutton-rogan-josh",
+      "name": "Slow-Cooked Rogan Josh",
+      "category": "mains",
+      "price": 540,
+      "diet": "nonveg",
+      "popular": true,
+      "description": "Tender mutton shank braised in Kashmiri chilli gravy, dry ginger, and aromatic spices.",
+      "image": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80",
+      "spiceLevels": ["Medium", "Spicy"]
+    },
+    {
+      "id": "dal-bukhara",
+      "name": "Dal Bukhara",
+      "category": "mains",
+      "price": 360,
+      "diet": "veg",
+      "popular": true,
+      "description": "Whole black lentils slow-cooked overnight with vine tomatoes, garlic, and churned butter.",
+      "image": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "paneer-lababdar",
+      "name": "Paneer Lababdar",
+      "category": "mains",
+      "price": 420,
+      "diet": "veg",
+      "popular": false,
+      "description": "Fresh paneer cubes simmered in a velvety cashew, onion, and tomato gravy.",
+      "image": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80",
+      "spiceLevels": ["Mild", "Medium"]
+    },
+    {
+      "id": "dum-biryani",
+      "name": "Chicken Dum Biryani",
+      "category": "mains",
+      "price": 490,
+      "diet": "nonveg",
+      "popular": true,
+      "description": "Aged basmati rice and marinated chicken slow-steamed in a sealed handi with saffron and mint.",
+      "image": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "garlic-naan",
+      "name": "Garlic Butter Naan",
+      "category": "breads",
+      "price": 120,
+      "diet": "veg",
+      "popular": true,
+      "description": "Clay tandoor flatbread topped with minced garlic, fresh coriander, and melted butter.",
+      "image": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "laccha-paratha",
+      "name": "Laccha Paratha",
+      "category": "breads",
+      "price": 90,
+      "diet": "veg",
+      "popular": false,
+      "description": "Flaky layered whole-wheat flatbread cooked crisp with carom seeds and pure ghee.",
+      "image": "https://images.unsplash.com/photo-1505253758473-96b46de82ab9?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "kesar-kulfi",
+      "name": "Kesar Pista Kulfi",
+      "category": "desserts",
+      "price": 220,
+      "diet": "veg",
+      "popular": true,
+      "description": "Rich traditional frozen milk dessert flavored with pure saffron strands and pistachios.",
+      "image": "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "kokum-cooler",
+      "name": "Sparkling Kokum Cooler",
+      "category": "drinks",
+      "price": 160,
+      "diet": "veg",
+      "popular": true,
+      "description": "Chilled sparkling drink infused with wild kokum, mint leaves, and roasted cumin.",
+      "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "mango-lassi",
+      "name": "Alphonso Mango Lassi",
+      "category": "drinks",
+      "price": 180,
+      "diet": "veg",
+      "popular": false,
+      "description": "Creamy churned yogurt blended with ripe Alphonso mango pulp and cardamom.",
+      "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80"
+    }
+  ]
+}
