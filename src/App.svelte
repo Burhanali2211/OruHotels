@@ -120,7 +120,10 @@
     <!-- Minimalist Footer -->
     <footer class="app-footer">
       <div class="footer-title">{restaurant.name}</div>
-      <div class="footer-sub">{restaurant.table} &bull; Dine-In Digital Menu</div>
+      <div class="footer-sub">Dine-In Digital Menu</div>
+      <div class="footer-branding">
+        Powered by <span class="brand-highlight">Easy IO Technologies</span>
+      </div>
     </footer>
   </main>
 
@@ -314,6 +317,18 @@
   .footer-sub {
     font-size: 0.74rem;
     margin-top: 2px;
+  }
+
+  .footer-branding {
+    font-size: 0.7rem;
+    margin-top: 16px;
+    opacity: 0.7;
+    letter-spacing: 0.02em;
+  }
+
+  .brand-highlight {
+    font-weight: 700;
+    color: var(--ios-blue);
   }
 
   @media (min-width: 600px) {

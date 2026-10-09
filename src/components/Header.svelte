@@ -10,10 +10,12 @@
     <!-- Brand & Table -->
     <div class="brand-group">
       <div class="brand-title">{restaurant.name}</div>
-      <div class="table-badge">
-        <span class="live-dot"></span>
-        <span>{restaurant.table}</span>
-      </div>
+      {#if APP_CONFIG.isOrderingEnabled}
+        <div class="table-badge">
+          <span class="live-dot"></span>
+          <span>{restaurant.table}</span>
+        </div>
+      {/if}
     </div>
 
     <!-- Right Cart Trigger -->
