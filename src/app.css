@@ -1,41 +1,81 @@
 /* ==========================================================================
-   ORU — Minimalist iOS & Dribbble Design System
-   Clean, Apple-inspired, High-Clarity Mobile Interface
+   DIAMOND CAFE — High-End Culinary Experience Design System
+   Dribbble & Modern Apple iOS Design Language
+   Tactile, High-Clarity, Fluid Performance Mobile Interface
    ========================================================================== */
 
 :root {
-  /* Apple iOS Palette */
-  --ios-bg: #F2F2F7;
+  /* Surface & Background */
+  --ios-bg: #F6F6F9;
   --ios-card: #FFFFFF;
-  --ios-separator: #E5E5EA;
-  --ios-fill: #E5E5EA;
-  --ios-fill-secondary: #EBEBF0;
-  
-  /* Text */
-  --text-primary: #000000;
-  --text-secondary: #3C3C43;
-  --text-muted: #8E8E93;
-  --text-subtle: #C7C7CC;
+  --ios-card-subtle: #F9F9FC;
+  --ios-separator: #E8E8EE;
+  --ios-separator-light: rgba(0, 0, 0, 0.05);
+  --ios-fill: #EBEBF2;
+  --ios-fill-secondary: #F0F0F5;
 
-  /* Accent */
-  --accent-black: #000000;
-  --accent-emerald: #34C759;
-  --accent-red: #FF3B30;
+  /* Typography Colors */
+  --text-primary: #121217;
+  --text-secondary: #484852;
+  --text-muted: #868692;
+  --text-subtle: #BCBCC6;
 
-  /* Shadows */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.06);
+  /* Brand & Culinary Accents */
+  --accent-gold: #D97706;
+  --accent-gold-light: #FEF3C7;
+  --accent-gold-gradient: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  --accent-black: #16161A;
+  --accent-emerald: #15803D;
+  --accent-emerald-bg: #DCFCE7;
+  --accent-red: #DC2626;
+  --accent-red-bg: #FEE2E2;
+  --accent-blue: #0284C7;
 
-  /* Radii */
+  /* Elevation Shadows */
+  --shadow-sm: 0 1px 3px rgba(18, 18, 23, 0.04), 0 1px 2px rgba(18, 18, 23, 0.02);
+  --shadow-card: 0 4px 16px -2px rgba(18, 18, 23, 0.06), 0 2px 6px -1px rgba(18, 18, 23, 0.03);
+  --shadow-card-hover: 0 10px 28px -4px rgba(18, 18, 23, 0.12), 0 4px 10px -2px rgba(18, 18, 23, 0.04);
+  --shadow-float: 0 20px 48px -8px rgba(18, 18, 23, 0.22), 0 6px 16px rgba(18, 18, 23, 0.08);
+  --shadow-pill: 0 4px 14px rgba(0, 0, 0, 0.12);
+
+  /* Border Radii */
   --radius-xs: 6px;
   --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
   --radius-pill: 9999px;
 
-  /* Font */
-  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Plus Jakarta Sans", Roboto, sans-serif;
-  --max-width: 720px;
+  /* Glassmorphism */
+  --glass-bg: rgba(246, 246, 249, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-blur: blur(20px);
+
+  /* Fonts */
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  --max-width: 680px;
+}
+
+/* Lineicons base alignment & color utilities */
+.lni {
+  line-height: 1;
+  vertical-align: -0.1em;
+  display: inline-block;
+}
+
+.icon-star {
+  color: #F59E0B;
+}
+
+.icon-fire {
+  color: #EA580C;
+}
+
+.lni-custom-icon {
+  display: inline-block;
+  vertical-align: -0.12em;
+  stroke: currentColor;
 }
 
 *, *::before, *::after {
@@ -54,7 +94,7 @@ html {
 body {
   background-color: var(--ios-bg);
   color: var(--text-primary);
-  font-family: var(--font-system);
+  font-family: var(--font-sans);
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -69,10 +109,11 @@ body {
   min-height: 100vh;
   position: relative;
   background-color: var(--ios-bg);
-  padding-bottom: 120px;
+  padding-bottom: 140px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.04);
 }
 
-/* Dietary Icons */
+/* Dietary Indicators */
 .icon-veg {
   color: var(--accent-emerald);
 }
@@ -81,28 +122,57 @@ body {
   color: var(--accent-red);
 }
 
+.diet-dot-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  background: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.diet-dot-badge.veg {
+  border: 1.5px solid var(--accent-emerald);
+}
+
+.diet-dot-badge.veg .dot-circle {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-emerald);
+}
+
+.diet-dot-badge.nonveg {
+  border: 1.5px solid var(--accent-red);
+}
+
+.diet-dot-badge.nonveg .dot-circle {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 7px solid var(--accent-red);
+}
+
 /* ==========================================================================
-   Apple iOS / macOS Action Buttons & Steppers
-   - Authentic continuous pill roundness (border-radius: 9999px)
-   - Tactile hardware depth (subtle top specular border, elevation shadows)
-   - Guaranteed pure white typography (no link/visited blue tint)
-   - Translucent glass price capsule badges
-   - Haptic spring compression (:active scale 0.975)
+   Apple iOS / Dribbble Action Buttons & Steppers
    ========================================================================== */
 
 .btn-apple-primary {
   position: relative;
-  background: linear-gradient(180deg, #1C1C1E 0%, #000000 100%);
+  background: linear-gradient(180deg, #24242A 0%, #121217 100%);
   color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: var(--radius-pill); /* Authentic Apple Pill Roundness */
-  min-height: 52px;
-  height: 52px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-pill);
+  min-height: 50px;
+  height: 50px;
   padding: 0 20px;
-  font-family: var(--font-system);
+  font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: -0.015em;
+  font-size: 0.94rem;
+  letter-spacing: -0.01em;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -110,13 +180,12 @@ body {
   gap: 12px;
   width: 100%;
   box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.24),
+    0 4px 18px rgba(18, 18, 23, 0.28),
     0 1px 3px rgba(0, 0, 0, 0.12),
-    inset 0 1px 1px rgba(255, 255, 255, 0.28);
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
   transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), 
               box-shadow 0.16s cubic-bezier(0.16, 1, 0.3, 1), 
-              filter 0.16s ease,
-              opacity 0.16s ease;
+              filter 0.16s ease;
   user-select: none;
   -webkit-user-select: none;
   text-decoration: none;
@@ -124,75 +193,42 @@ body {
 }
 
 .btn-apple-primary *,
-.btn-apple-primary span,
-.btn-apple-primary a {
-  color: #FFFFFF !important; /* Strictly enforce white text, no default blue */
-  text-decoration: none !important;
+.btn-apple-primary span {
+  color: #FFFFFF !important;
 }
 
 .btn-apple-primary:hover {
   filter: brightness(1.08);
-  box-shadow: 
-    0 6px 20px rgba(0, 0, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.16),
-    inset 0 1px 1px rgba(255, 255, 255, 0.36);
+  box-shadow: 0 6px 22px rgba(18, 18, 23, 0.35);
 }
 
 .btn-apple-primary:active {
   transform: scale(0.975);
-  box-shadow: 
-    0 2px 6px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
   filter: brightness(0.92);
 }
 
-.btn-apple-primary:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-apple-primary .btn-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: -0.01em;
-  color: #FFFFFF !important;
-}
-
 .btn-apple-primary .btn-price-badge {
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-pill);
-  padding: 5px 13px;
+  padding: 4px 12px;
   font-size: 0.88rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
   color: #FFFFFF !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
   flex-shrink: 0;
 }
 
-.btn-apple-primary.btn-apple-center {
-  justify-content: center;
-  gap: 8px;
-}
-
-/* Apple Secondary Pill Button */
 .btn-apple-secondary {
-  background: var(--ios-fill-secondary);
+  background: #FFFFFF;
   color: var(--text-primary) !important;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--ios-separator);
   border-radius: var(--radius-pill);
   min-height: 44px;
-  padding: 0 20px;
-  font-family: var(--font-system);
+  padding: 0 18px;
+  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 0.88rem;
   cursor: pointer;
@@ -200,28 +236,29 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.16s ease, background 0.15s ease;
   user-select: none;
 }
 
 .btn-apple-secondary:active {
-  transform: scale(0.97);
-  background: var(--ios-fill);
+  transform: scale(0.96);
+  background: var(--ios-fill-secondary);
 }
 
-/* Tactile iOS Pill Stepper */
+/* Stepper Pill */
 .ios-stepper {
   display: inline-flex;
   align-items: center;
-  background: #000000;
+  background: #121217;
   color: #FFFFFF;
   border-radius: var(--radius-pill);
   height: 34px;
   padding: 0 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0.5px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   user-select: none;
   flex-shrink: 0;
+  transition: transform 0.12s ease;
 }
 
 .ios-stepper button {
@@ -243,7 +280,7 @@ body {
 }
 
 .ios-stepper button:active {
-  transform: scale(0.86);
+  transform: scale(0.85);
   background: rgba(255, 255, 255, 0.35);
 }
 
@@ -255,16 +292,15 @@ body {
   color: #FFFFFF;
 }
 
-/* Large Stepper for Sheet Footers */
+/* Stepper for Sheet */
 .ios-stepper.stepper-sheet {
-  height: 52px;
-  padding: 0 6px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  height: 50px;
+  padding: 0 8px;
 }
 
 .ios-stepper.stepper-sheet button {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
 }
 
 .ios-stepper.stepper-sheet span {
@@ -273,38 +309,50 @@ body {
   min-width: 32px;
 }
 
-/* Clean App Store Pill "+ ADD" Button */
+/* Tactile Pill "+ ADD" Button */
 .btn-ios-add {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
   background: #FFFFFF;
-  color: #000000;
-  border: 1.5px solid #000000;
+  color: var(--text-primary);
+  border: 1.5px solid var(--text-primary);
   border-radius: var(--radius-pill);
-  height: 32px;
-  padding: 0 14px;
-  font-size: 0.76rem;
+  height: 30px;
+  padding: 0 12px;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
   user-select: none;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 .btn-ios-add:hover {
-  background: #000000;
+  background: var(--text-primary);
   color: #FFFFFF;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
 .btn-ios-add:active {
   transform: scale(0.92);
-  background: #000000;
+  background: var(--text-primary);
   color: #FFFFFF;
+}
+
+/* Compact Add Button */
+.btn-ios-add-compact {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-width: 1px;
 }
 
 /* Sticky Bottom Order Bar */
@@ -314,13 +362,13 @@ body {
   left: 0;
   width: 100%;
   z-index: 900;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border-top: 0.5px solid var(--ios-separator);
-  padding: 14px 16px;
-  padding-bottom: max(14px, env(safe-area-inset-bottom));
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--ios-separator);
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08);
 }
 
 .bottom-bar-inner {
@@ -333,31 +381,61 @@ body {
 }
 
 .btn-apple-small {
-  min-height: 48px;
-  height: 48px;
-  padding: 0 20px;
+  min-height: 46px;
+  height: 46px;
+  padding: 0 18px;
   width: auto;
   flex: 1;
   max-width: 220px;
+}
+
+@media (max-width: 380px) {
+  .ios-bottom-bar {
+    padding: 10px 12px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  .bottom-bar-inner {
+    gap: 10px;
+  }
+
+  .btn-apple-small {
+    height: 42px;
+    min-height: 42px;
+    padding: 0 12px;
+    font-size: 0.82rem;
+  }
 }
 
 /* Modal and Drawer Backdrop */
 .ios-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(18, 18, 23, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: 1000;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  animation: fadeIn 0.2s ease;
 }
 
 @media (min-width: 640px) {
   .ios-backdrop {
     align-items: center;
+    padding: 20px;
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
 .no-scrollbar::-webkit-scrollbar {

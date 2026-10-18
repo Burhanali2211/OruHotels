@@ -1,21 +1,25 @@
 <script>
-  import { ShoppingBag } from '@lucide/svelte';
   import { cartSummary, isDrawerOpen, APP_CONFIG } from '../stores/cart.js';
+  import { hapticLight } from '../utils/haptics.js';
 
   export let restaurant;
+
+  function openTray() {
+    hapticLight();
+    isDrawerOpen.set(true);
+  }
 </script>
 
 <header class="ios-nav-header">
   <div class="nav-inner">
-    <!-- Brand & Table -->
+    <!-- Brand -->
     <div class="brand-group">
-      <div class="brand-title">{restaurant.name}</div>
-      {#if APP_CONFIG.isOrderingEnabled}
-        <div class="table-badge">
-          <span class="live-dot"></span>
-          <span>{restaurant.table}</span>
-        </div>
-      {/if}
+      <div class="brand-monogram">
+        <i class="lni lni-diamond-alt monogram-icon" aria-hidden="true"></i>
+      </div>
+      <div class="brand-text">
+        <h1 class="brand-title">{restaurant.name}</h1>
+      </div>
     </div>
 
     <!-- Right Cart Trigger -->
@@ -23,10 +27,10 @@
       <button
         class="btn-cart-nav"
         type="button"
-        on:click={() => isDrawerOpen.set(true)}
-        aria-label="View Order Tray"
+        on:click={openTray}
+        aria-label="View Order Tray ({$cartSummary.totalItems} items)"
       >
-        <ShoppingBag size={18} strokeWidth={2.2} />
+        <i class="lni lni-shopping-basket cart-icon" aria-hidden="true"></i>
         {#if $cartSummary.totalItems > 0}
           <span class="cart-pill-badge">{$cartSummary.totalItems}</span>
         {/if}
@@ -40,11 +44,11 @@
     position: sticky;
     top: 0;
     z-index: 800;
-    background: rgba(242, 242, 247, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 0.5px solid var(--ios-separator);
-    padding: 12px 16px;
+    background: rgba(246, 246, 249, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--ios-separator);
+    padding: 10px 16px;
   }
 
   .nav-inner {
@@ -59,34 +63,42 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
+  }
+
+  .brand-monogram {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #24242A 0%, #121217 100%);
+    color: var(--accent-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+  }
+
+  .monogram-icon {
+    font-size: 1.15rem;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
   .brand-title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: var(--text-primary);
-  }
-
-  .table-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: #FFFFFF;
-    border: 0.5px solid var(--ios-separator);
-    border-radius: var(--radius-pill);
-    padding: 4px 10px;
-    font-size: 0.76rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  }
-
-  .live-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-emerald);
+    line-height: 1.2;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .btn-cart-nav {
@@ -98,25 +110,31 @@
     height: 38px;
     border-radius: 50%;
     background: #FFFFFF;
-    border: 0.5px solid var(--ios-separator);
+    border: 1px solid var(--ios-separator);
     color: var(--text-primary);
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    transition: transform 0.15s ease;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, background 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .cart-icon {
+    font-size: 1.15rem;
   }
 
   .btn-cart-nav:active {
     transform: scale(0.92);
+    background: var(--ios-fill-secondary);
   }
 
   .cart-pill-badge {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    background: #000000;
+    top: -3px;
+    right: -3px;
+    background: #121217;
     color: #FFFFFF;
-    font-size: 0.68rem;
-    font-weight: 700;
+    font-size: 0.66rem;
+    font-weight: 800;
     min-width: 18px;
     height: 18px;
     border-radius: 9px;
@@ -125,5 +143,32 @@
     justify-content: center;
     padding: 0 4px;
     border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    animation: popBadge 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes popBadge {
+    0% { transform: scale(0.5); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  @media (max-width: 380px) {
+    .ios-nav-header {
+      padding: 8px 12px;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+    }
+
+    .btn-cart-nav {
+      width: 34px;
+      height: 34px;
+    }
+
+    .cart-icon {
+      font-size: 1.05rem;
+    }
   }
 </style>

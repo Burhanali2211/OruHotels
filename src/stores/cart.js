@@ -1,11 +1,11 @@
 import { writable, derived } from 'svelte/store';
 
-// App configuration (Toggle ordering features)
+// App configuration (Ordering enabled for rich interactivity)
 export const APP_CONFIG = {
-  isOrderingEnabled: false
+  isOrderingEnabled: true
 };
 
-// Cart store: { [cartKey]: { key, dish, quantity, spiceLevel, extras, unitPrice } }
+// Cart store: { [cartKey]: { key, dish, quantity, size, option, unitPrice } }
 export const cart = writable({});
 
 // Active Placed Order: null or { orderCode, items, subtotal, taxes, grandTotal, kitchenNotes, placedAt, status }
@@ -14,8 +14,11 @@ export const activeOrder = writable(null);
 // UI State
 export const isDrawerOpen = writable(false);
 export const isReceiptOpen = writable(false);
+export const isQuickMenuOpen = writable(false);
 export const selectedDish = writable(null);
 export const dietFilter = writable('all'); // 'all', 'veg', 'nonveg'
+export const quickFilter = writable('all'); // 'all', 'must-try', 'top-rated'
+export const viewMode = writable('cards'); // 'cards' (rich visual) or 'compact' (fast scan)
 export const activeCategory = writable('all');
 export const searchQuery = writable('');
 
@@ -47,12 +50,17 @@ export const cartSummary = derived(cart, ($cart) => {
   };
 });
 
-// Cart helper methods
-export function addToCart(dish, quantity = 1, spiceLevel = '', extras = []) {
-  const extrasKey = extras.map(e => e.name).sort().join('|');
-  const key = `${dish.id}__${spiceLevel || 'Standard'}__${extrasKey}`;
-  const extrasPrice = extras.reduce((sum, e) => sum + (e.price || 0), 0);
-  const unitPrice = dish.price + extrasPrice;
+// Cart helper methods with Size & Preparation Options
+export function addToCart(dish, quantity = 1, size = 'Regular', option = '') {
+  // Determine unit price based on selected size
+  let unitPrice = dish.price;
+  if (dish.sizes && dish.sizes[size]) {
+    unitPrice = dish.sizes[size];
+  }
+
+  const sizeKey = size || 'Standard';
+  const optKey = option || '';
+  const key = `${dish.id}__${sizeKey}${optKey ? '__' + optKey : ''}`;
 
   cart.update(current => {
     if (current[key]) {
@@ -62,15 +70,16 @@ export function addToCart(dish, quantity = 1, spiceLevel = '', extras = []) {
         key,
         dish,
         quantity,
-        spiceLevel: spiceLevel || 'Standard',
-        extras,
+        size: dish.sizes ? size : null,
+        option: option || null,
         unitPrice
       };
     }
     return { ...current };
   });
 
-  showToast(`Added ${quantity}× ${dish.name} to Table 08 order`);
+  const sizeLabel = dish.sizes ? ` (${size})` : (option ? ` (${option})` : '');
+  showToast(`Added ${quantity}× ${dish.name}${sizeLabel} to order`);
 }
 
 export function updateQuantity(key, delta) {

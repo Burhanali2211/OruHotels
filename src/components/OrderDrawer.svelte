@@ -1,5 +1,4 @@
 <script>
-  import { X, Trash2, Plus, Minus, ShoppingBag } from '@lucide/svelte';
   import { isDrawerOpen, isReceiptOpen, cartSummary, updateQuantity, removeItem, clearCart, activeOrder } from '../stores/cart.js';
   import { hapticLight, hapticSuccess } from '../utils/haptics.js';
 
@@ -78,13 +77,10 @@
 
       <!-- Drawer Header -->
       <div class="drawer-header">
-        <div>
-          <div class="table-pill">Table 08</div>
-          <h2 class="drawer-title" id="drawer-title">Your Order</h2>
-        </div>
+        <h2 class="drawer-title" id="drawer-title">Your Order Tray</h2>
 
         <button class="btn-sheet-close" type="button" on:click={closeDrawer} aria-label="Close">
-          <X size={16} />
+          <i class="lni lni-close" aria-hidden="true"></i>
         </button>
       </div>
 
@@ -92,7 +88,7 @@
       {#if $cartSummary.entries.length === 0}
         <div class="empty-state">
           <div class="empty-icon">
-            <ShoppingBag size={28} />
+            <i class="lni lni-shopping-basket" aria-hidden="true"></i>
           </div>
           <h3>Your tray is empty</h3>
           <p>Tap + ADD on any dish to begin your order.</p>
@@ -111,8 +107,11 @@
 
                 <div class="item-text">
                   <div class="item-name">{entry.dish.name}</div>
-                  {#if entry.spiceLevel}
-                    <div class="item-sub">{entry.spiceLevel}</div>
+                  {#if entry.size}
+                    <div class="item-sub">Size: {entry.size}</div>
+                  {/if}
+                  {#if entry.option}
+                    <div class="item-sub">Style: {entry.option}</div>
                   {/if}
                   <div class="item-price">₹{entry.unitPrice * entry.quantity}</div>
                 </div>
@@ -120,11 +119,11 @@
                 <div class="item-stepper-wrap">
                   <div class="ios-stepper">
                     <button type="button" on:click={() => dec(entry.key)} aria-label="Decrease">
-                      <Minus size={12} strokeWidth={2.5} />
+                      <i class="lni lni-minus" aria-hidden="true"></i>
                     </button>
                     <span>{entry.quantity}</span>
                     <button type="button" on:click={() => inc(entry.key)} aria-label="Increase">
-                      <Plus size={12} strokeWidth={2.5} />
+                      <i class="lni lni-plus" aria-hidden="true"></i>
                     </button>
                   </div>
 
@@ -135,7 +134,7 @@
                     title="Remove item"
                     aria-label="Remove item"
                   >
-                    <Trash2 size={13} />
+                    <i class="lni lni-trash-can" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -183,7 +182,7 @@
               {#if isTransmitting}
                 Sending to Kitchen...
               {:else}
-                Place Order • Table 08
+                Confirm Order
               {/if}
             </span>
             <span class="btn-price-badge">₹{$cartSummary.grandTotal}</span>
@@ -235,17 +234,6 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: 0.5px solid var(--ios-separator);
-  }
-
-  .table-pill {
-    display: inline-block;
-    background: #000000;
-    color: #FFFFFF;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: var(--radius-xs);
-    margin-bottom: 2px;
   }
 
   .drawer-title {
@@ -330,6 +318,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
   }
 
   .btn-trash {
@@ -422,5 +411,38 @@
     font-size: 0.82rem;
     color: var(--text-muted);
     margin-bottom: 16px;
+  }
+
+  @media (max-width: 380px) {
+    .drawer-header {
+      padding: 10px 14px;
+    }
+
+    .drawer-body {
+      padding: 12px 14px;
+      gap: 12px;
+    }
+
+    .drawer-item-row {
+      padding: 8px 10px;
+      gap: 8px;
+    }
+
+    .item-thumb {
+      width: 40px;
+      height: 40px;
+    }
+
+    .item-name {
+      font-size: 0.82rem;
+    }
+
+    .item-stepper-wrap {
+      gap: 5px;
+    }
+
+    .drawer-footer {
+      padding: 12px 14px;
+    }
   }
 </style>

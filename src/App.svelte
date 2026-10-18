@@ -2,8 +2,10 @@
   import menuData from './data/menu.json';
   import {
     dietFilter,
+    quickFilter,
     activeCategory,
     searchQuery,
+    viewMode,
     cartSummary,
     isDrawerOpen,
     APP_CONFIG
@@ -12,25 +14,27 @@
   import Header from './components/Header.svelte';
   import ActiveOrderBanner from './components/ActiveOrderBanner.svelte';
   import Hero from './components/Hero.svelte';
+  import HeroSpotlight from './components/HeroSpotlight.svelte';
   import CategoryNav from './components/CategoryNav.svelte';
   import DishCard from './components/DishCard.svelte';
   import DishModal from './components/DishModal.svelte';
   import OrderDrawer from './components/OrderDrawer.svelte';
   import OrderReceiptModal from './components/OrderReceiptModal.svelte';
+  import QuickMenuSheet from './components/QuickMenuSheet.svelte';
   import Toast from './components/Toast.svelte';
-  import { ShoppingBag, ArrowRight } from '@lucide/svelte';
-  import { onMount } from 'svelte';
 
   const { restaurant, categories, dishes } = menuData;
 
-  let isLoading = true;
+  // Lineicons class mapping for section headers
+  const iconClassMap = {
+    'nonveg-pizza': 'lni lni-pizza',
+    'veg-pizza': 'lni lni-leaf',
+    'fish-special': 'lni lni-drop',
+    'beverages': 'lni lni-fresh-juice',
+    'all': 'lni lni-restaurant'
+  };
 
-  onMount(() => {
-    // Simulate 1.5s network request for premium feel
-    setTimeout(() => {
-      isLoading = false;
-    }, 1200);
-  });
+  let isLoading = false;
 
   // Reactive dish filtering
   $: filteredDishes = dishes.filter(dish => {
@@ -38,24 +42,51 @@
     if ($dietFilter === 'veg' && dish.diet !== 'veg') return false;
     if ($dietFilter === 'nonveg' && dish.diet !== 'nonveg') return false;
 
+    // Quick Filters
+    if ($quickFilter === 'must-try' && !dish.popular) return false;
+    if ($quickFilter === 'top-rated' && (!dish.rating || dish.rating < 4.8)) return false;
+
     // Search Query
     if ($searchQuery.trim()) {
       const q = $searchQuery.toLowerCase().trim();
       const matchName = dish.name.toLowerCase().includes(q);
       const matchDesc = dish.description.toLowerCase().includes(q);
-      if (!matchName && !matchDesc) return false;
+      const matchTag = dish.tag?.toLowerCase().includes(q);
+      const matchCat = dish.category.toLowerCase().includes(q);
+      if (!matchName && !matchDesc && !matchTag && !matchCat) return false;
     }
 
     return true;
   });
 
-  // Group dishes by category
-  $: displayedCategories = categories.filter(cat => cat.id !== 'all').map(cat => {
-    return {
-      ...cat,
-      items: filteredDishes.filter(d => d.category === cat.id)
-    };
-  }).filter(cat => cat.items.length > 0);
+  // Categories with matching items and count
+  $: displayedCategories = categories
+    .filter(cat => cat.id !== 'all')
+    .map(cat => {
+      const items = filteredDishes.filter(d => d.category === cat.id);
+      return {
+        ...cat,
+        items,
+        itemCount: items.length
+      };
+    })
+    .filter(cat => cat.items.length > 0);
+
+  // Categories list with counts for CategoryNav
+  $: navCategories = [
+    {
+      id: 'all',
+      name: 'All Items',
+      itemCount: filteredDishes.length
+    },
+    ...categories.filter(c => c.id !== 'all').map(c => {
+      const count = filteredDishes.filter(d => d.category === c.id).length;
+      return {
+        ...c,
+        itemCount: count
+      };
+    }).filter(c => c.itemCount > 0)
+  ];
 </script>
 
 <div class="oru-app-wrapper">
@@ -66,11 +97,16 @@
   <ActiveOrderBanner />
 
   <main>
-    <!-- Search and Segmented Dietary Control -->
+    <!-- Search, Dietary Control & Quick Filter Chips -->
     <Hero />
 
-    <!-- Category Pills Navigation -->
-    <CategoryNav {categories} />
+    <!-- Chef's Highlights Spotlight (Shows when no search is active) -->
+    {#if !$searchQuery.trim() && $quickFilter === 'all'}
+      <HeroSpotlight {dishes} />
+    {/if}
+
+    <!-- Category Pills Navigation with Scroll-Spy -->
+    <CategoryNav categories={navCategories} />
 
     <!-- Menu Dishes Stream -->
     <div class="menu-content-stream">
@@ -89,52 +125,106 @@
         </div>
       {:else if displayedCategories.length === 0}
         <div class="empty-results-box">
-          <h3>No dishes found</h3>
-          <p>Try searching for something else or clear your dietary filter.</p>
+          <div class="empty-icon-circle">
+            <i class="lni lni-restaurant" style="font-size: 1.8rem;" aria-hidden="true"></i>
+          </div>
+          <h3>No matching dishes found</h3>
+          <p>We couldn't find any dishes matching your current search or dietary filters.</p>
           <button
             class="btn-apple-secondary"
             type="button"
-            on:click={() => { $searchQuery = ''; $dietFilter = 'all'; }}
+            on:click={() => { 
+              $searchQuery = ''; 
+              $dietFilter = 'all'; 
+              $quickFilter = 'all'; 
+            }}
           >
-            Clear Filters
+            Reset All Filters
           </button>
         </div>
       {:else}
+        <!-- Differentiated Category Sections -->
         {#each displayedCategories as cat (cat.id)}
-          <section class="menu-section" id="section-{cat.id}">
+          {@const iconCls = iconClassMap[cat.id] || 'lni lni-restaurant'}
+          <section class="menu-section section-{cat.id}" id="section-{cat.id}">
+            <!-- Distinct Category Header -->
             <div class="section-header">
-              <h2 class="section-title">{cat.name}</h2>
-              <span class="section-badge">{cat.items.length}</span>
+              <div class="section-title-wrap">
+                <div class="section-icon-badge" style="--accent-hue: {cat.color || '#EA580C'}">
+                  <i class="{iconCls} sec-hdr-icon" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <h2 class="section-title">{cat.name}</h2>
+                  {#if cat.subtitle}
+                    <span class="section-subtitle">{cat.subtitle}</span>
+                  {/if}
+                </div>
+              </div>
+              <span class="section-count-badge">{cat.items.length} {cat.items.length === 1 ? 'item' : 'items'}</span>
             </div>
 
-            <div class="dish-stack">
-              {#each cat.items as dish (dish.id)}
-                <DishCard {dish} />
-              {/each}
-            </div>
+            <!-- Dynamic Layout by Category -->
+            {#if $viewMode === 'compact'}
+              <div class="dish-stack compact-stack">
+                {#each cat.items as dish (dish.id)}
+                  <DishCard {dish} category={cat.id} />
+                {/each}
+              </div>
+            {:else if cat.id === 'beverages'}
+              <!-- Beverages Grid -->
+              <div class="dish-grid-beverages">
+                {#each cat.items as dish (dish.id)}
+                  <DishCard {dish} category={cat.id} />
+                {/each}
+              </div>
+            {:else}
+              <!-- Pizzas & Fish Special -->
+              <div class="dish-stack">
+                {#each cat.items as dish (dish.id)}
+                  <DishCard {dish} category={cat.id} />
+                {/each}
+              </div>
+            {/if}
           </section>
         {/each}
       {/if}
     </div>
 
-    <!-- Minimalist Footer -->
+    <!-- Minimalist Footer with Real Store Contact Info -->
     <footer class="app-footer">
       <div class="footer-title">{restaurant.name}</div>
-      <div class="footer-sub">Dine-In Digital Menu</div>
+      <div class="footer-sub">{restaurant.tagline}</div>
+      <div class="footer-address">
+        <i class="lni lni-map-marker footer-icon" aria-hidden="true"></i>
+        <span>{restaurant.address}</span>
+      </div>
+      <div class="footer-phones">
+        <i class="lni lni-phone footer-icon" aria-hidden="true"></i>
+        <span>Orders &amp; Enquiries:</span> 
+        <a href="tel:{restaurant.phone}" class="phone-link">{restaurant.phone}</a>
+        {#if restaurant.secondaryPhones}
+          {#each restaurant.secondaryPhones as p}
+            • <a href="tel:{p}" class="phone-link">{p}</a>
+          {/each}
+        {/if}
+      </div>
       <div class="footer-branding">
-        Powered by <span class="brand-highlight">Easy IO Technologies</span>
+        Dine-In Digital Menu • <span class="brand-highlight">OruHotels</span>
       </div>
     </footer>
   </main>
 
-  <!-- iOS Sticky Bottom Bar -->
+  <!-- Dribbble Floating Quick-Jump Menu Sheet -->
+  <QuickMenuSheet {categories} {dishes} />
+
+  <!-- iOS Sticky Bottom Bar (When ordering items exist) -->
   {#if APP_CONFIG.isOrderingEnabled && $cartSummary.totalItems > 0 && !$isDrawerOpen}
     <div class="ios-bottom-bar">
       <div class="bottom-bar-inner">
         <div class="bar-order-info">
           <div class="bar-items">
-            <ShoppingBag size={14} strokeWidth={2.5} class="bag-icon" />
-            <span>{$cartSummary.totalItems} {$cartSummary.totalItems === 1 ? 'item' : 'items'}</span>
+            <i class="lni lni-shopping-basket bag-icon" aria-hidden="true"></i>
+            <span>{$cartSummary.totalItems} {$cartSummary.totalItems === 1 ? 'item' : 'items'} in Tray</span>
           </div>
           <div class="bar-total">₹{$cartSummary.grandTotal}</div>
         </div>
@@ -145,8 +235,8 @@
           on:click={() => isDrawerOpen.set(true)}
           aria-label="View Order Tray"
         >
-          <span class="btn-label">View Order</span>
-          <ArrowRight size={16} strokeWidth={2.5} />
+          <span class="btn-label">Review Order</span>
+          <i class="lni lni-arrow-right" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -163,47 +253,95 @@
   .menu-content-stream {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 12px 16px 36px;
+    padding: 12px 16px 40px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
   }
 
   .menu-section {
-    scroll-margin-top: 105px;
+    scroll-margin-top: 112px;
   }
 
+  /* Section Header Styling */
   .section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
-    padding: 4px 2px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ios-separator);
+  }
+
+  .section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--accent-hue, #EA580C) 14%, transparent);
+    color: var(--accent-hue, #EA580C);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sec-hdr-icon {
+    font-size: 1.15rem;
   }
 
   .section-title {
+    font-family: var(--font-sans);
     font-size: 1.15rem;
     font-weight: 800;
     color: var(--text-primary);
     margin: 0;
-    letter-spacing: -0.01em;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
   }
 
-  .section-badge {
+  .section-subtitle {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .section-count-badge {
     font-size: 0.72rem;
     font-weight: 700;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     background: var(--ios-fill);
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: var(--radius-pill);
+    flex-shrink: 0;
   }
 
+  /* Default Stack */
   .dish-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .compact-stack {
+    gap: 8px;
+  }
+
+  /* Beverages Grid */
+  .dish-grid-beverages {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
 
+  /* Skeleton Loading */
   .skeleton-wrapper {
     display: flex;
     flex-direction: column;
@@ -213,15 +351,15 @@
   .skeleton-card {
     display: flex;
     gap: 16px;
-    padding: 12px;
+    padding: 14px;
     background: #FFFFFF;
     border-radius: var(--radius-lg);
-    border: 0.5px solid var(--ios-separator);
+    border: 1px solid var(--ios-separator);
   }
 
   .skeleton-img {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     border-radius: var(--radius-md);
     background: var(--ios-fill);
     animation: pulse 1.5s infinite;
@@ -254,21 +392,41 @@
 
   .empty-results-box {
     text-align: center;
-    padding: 50px 20px;
+    padding: 48px 24px;
     background: #FFFFFF;
-    border-radius: var(--radius-md);
-    border: 0.5px solid var(--ios-separator);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--ios-separator);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
 
-  .empty-results-box h3 {
-    font-size: 1.1rem;
+  .empty-icon-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--ios-fill);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 4px;
   }
 
+  .empty-results-box h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
   .empty-results-box p {
-    font-size: 0.85rem;
+    font-size: 0.86rem;
     color: var(--text-muted);
-    margin-bottom: 16px;
+    max-width: 320px;
+    line-height: 1.45;
+    margin-bottom: 8px;
   }
 
   /* Bottom Bar Internal */
@@ -282,20 +440,20 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     margin-bottom: 2px;
   }
 
-  :global(.bag-icon) {
-    color: var(--text-muted);
+  .bag-icon {
+    color: var(--accent-gold);
+    font-size: 1rem;
   }
 
   .bar-total {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--text-primary);
     letter-spacing: -0.02em;
@@ -304,35 +462,113 @@
   /* Footer */
   .app-footer {
     text-align: center;
-    padding: 30px 16px 10px;
+    padding: 36px 16px 20px;
     color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
   }
 
   .footer-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
   }
 
   .footer-sub {
+    font-size: 0.78rem;
+    color: var(--accent-gold);
+    font-weight: 600;
+  }
+
+  .footer-address {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .footer-phones {
     font-size: 0.74rem;
+    color: var(--text-secondary);
     margin-top: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .footer-icon {
+    color: var(--accent-gold);
+    font-size: 0.85rem;
+  }
+
+  .phone-link {
+    color: var(--text-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .phone-link:hover {
+    text-decoration: underline;
   }
 
   .footer-branding {
-    font-size: 0.7rem;
-    margin-top: 16px;
-    opacity: 0.7;
+    font-size: 0.72rem;
+    margin-top: 14px;
+    opacity: 0.75;
     letter-spacing: 0.02em;
   }
 
   .brand-highlight {
     font-weight: 700;
-    color: var(--ios-blue);
+    color: var(--text-primary);
   }
 
-  @media (min-width: 600px) {
+  @media (max-width: 480px) {
+    .menu-content-stream {
+      padding: 10px 12px 36px;
+      gap: 24px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+    }
+
+    .section-count-badge {
+      font-size: 0.68rem;
+      padding: 2px 7px;
+    }
+  }
+
+  @media (max-width: 375px) {
+    .menu-content-stream {
+      padding: 8px 10px 32px;
+      gap: 20px;
+    }
+
+    .section-title {
+      font-size: 0.98rem;
+    }
+  }
+
+  @media (min-width: 768px) {
     .dish-stack {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .compact-stack {
+      grid-template-columns: 1fr;
+    }
+
+    .dish-grid-beverages {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;

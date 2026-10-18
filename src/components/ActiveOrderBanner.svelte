@@ -26,8 +26,11 @@
       <div class="banner-left">
         <span class="live-pulse"></span>
         <div class="banner-text">
-          <span class="order-tag">Order {$activeOrder.orderCode} In Kitchen</span>
-          <span class="table-tag">Table 08 &bull; Est. 15–20 mins</span>
+          <span class="order-tag">
+            <i class="lni lni-chef-hat" aria-hidden="true"></i>
+            Order {$activeOrder.orderCode} In Kitchen
+          </span>
+          <span class="table-tag">Freshly Preparing &bull; Est. 15–20 mins</span>
         </div>
       </div>
 
@@ -53,12 +56,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
   }
 
   .banner-left {
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
   }
 
   .live-pulse {
@@ -67,21 +72,29 @@
     border-radius: 50%;
     background: #34C759;
     box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.3);
+    flex-shrink: 0;
   }
 
   .banner-text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
   .order-tag {
     font-size: 0.8rem;
     font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .table-tag {
     font-size: 0.68rem;
     color: #8E8E93;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .btn-receipt-pill {
@@ -93,5 +106,7 @@
     font-size: 0.74rem;
     font-weight: 600;
     cursor: pointer;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
 </style>
