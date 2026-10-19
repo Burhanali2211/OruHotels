@@ -4,7 +4,6 @@
 
   export let dishes = [];
 
-  // Filter only popular / chef recommended items from New Diamond Cafe
   $: spotlightDishes = dishes.filter(d => d.popular).slice(0, 5);
 
   function getQty(dishId) {
@@ -12,12 +11,18 @@
     return entries.reduce((sum, e) => sum + e.quantity, 0);
   }
 
+  function openDish(dish) {
+    selectedDish.set(dish);
+  }
+
   function handleAdd(dish, e) {
     e.stopPropagation();
     hapticLight();
-    const defaultSize = dish.sizes ? 'Regular' : null;
-    const defaultOpt = dish.options && dish.options.length > 0 ? dish.options[0] : '';
-    addToCart(dish, 1, defaultSize, defaultOpt);
+    if (dish.sizes || (dish.options && dish.options.length > 0)) {
+      openDish(dish);
+    } else {
+      addToCart(dish, 1, null, '');
+    }
   }
 
   function handleDecrease(dish, e) {
@@ -32,41 +37,33 @@
   function handleIncrease(dish, e) {
     e.stopPropagation();
     hapticLight();
-    const entries = Object.values($cart).filter(entry => entry.dish.id === dish.id);
-    if (entries[0]) {
-      updateQuantity(entries[0].key, 1);
+    if (dish.sizes || (dish.options && dish.options.length > 0)) {
+      openDish(dish);
     } else {
-      const defaultSize = dish.sizes ? 'Regular' : null;
-      const defaultOpt = dish.options && dish.options.length > 0 ? dish.options[0] : '';
-      addToCart(dish, 1, defaultSize, defaultOpt);
+      addToCart(dish, 1, null, '');
     }
-  }
-
-  function openDish(dish) {
-    selectedDish.set(dish);
   }
 </script>
 
 {#if spotlightDishes.length > 0}
-  <section class="spotlight-section" aria-label="Chef's Highlights">
+  <section class="spotlight-section" aria-label="House Highlights">
     <div class="spotlight-header">
-      <div class="header-left">
-        <div class="eyebrow-pill">
-          <i class="lni lni-chef-hat icon-sparkle" aria-hidden="true"></i>
-          <span>New Diamond Cafe Specials</span>
-        </div>
-        <h2 class="spotlight-title">House Favorites &amp; Bestsellers</h2>
+      <div>
+        <span class="spotlight-eyebrow">House Highlights</span>
+        <h2 class="spotlight-title">Customer Favorites</h2>
       </div>
       <span class="spotlight-hint">
-        Swipe <i class="lni lni-arrow-right" aria-hidden="true"></i>
+        Scroll <i class="lni lni-arrow-right" aria-hidden="true"></i>
       </span>
     </div>
 
-    <!-- Horizontal Swipe Scroller -->
+    <!-- Horizontal Carousel -->
     <div class="spotlight-scroller no-scrollbar">
       {#each spotlightDishes as dish (dish.id)}
         {@const qty = getQty(dish.id)}
         {@const displayPrice = dish.sizes ? dish.sizes.Regular : dish.price}
+        {@const hasCustom = !!(dish.sizes || (dish.options && dish.options.length > 0))}
+
         <div
           class="spotlight-card"
           on:click={() => openDish(dish)}
@@ -75,51 +72,24 @@
           tabindex="0"
           aria-label="{dish.name}"
         >
-          <!-- Card Image & Floating Badges -->
+          <!-- Clean Dish Photo -->
           <div class="card-media">
             <img src={dish.image} alt={dish.name} class="media-img" loading="lazy" />
-            <div class="media-gradient"></div>
-
-            <div class="media-top-tags">
-              <span class="tag-pill tag-popular">
-                <i class="lni lni-tag" aria-hidden="true"></i>
-                <span>{dish.tag || 'Must Try'}</span>
-              </span>
-
-              {#if dish.rating}
-                <span class="tag-pill tag-rating">
-                  <i class="lni lni-star-fill icon-star" aria-hidden="true"></i>
-                  <span>{dish.rating}</span>
-                </span>
-              {/if}
-            </div>
-
-            <div class="media-bottom-meta">
-              <span class="diet-dot-badge {dish.diet}">
-                <span class="dot-circle"></span>
-              </span>
-              {#if dish.prepTime}
-                <span class="prep-pill">
-                  <i class="lni lni-timer" aria-hidden="true"></i>
-                  <span>{dish.prepTime}</span>
-                </span>
-              {/if}
-            </div>
           </div>
 
           <!-- Card Content -->
           <div class="card-details">
-            <h3 class="dish-name">{dish.name}</h3>
+            <div class="dish-meta-line">
+              <span class="diet-dot-badge {dish.diet}">
+                <span class="dot-circle"></span>
+              </span>
+              <h3 class="dish-name">{dish.name}</h3>
+            </div>
+
             <p class="dish-snippet">{dish.description}</p>
 
             <div class="card-footer">
-              <div class="price-box">
-                <span class="price-symbol">₹</span>
-                <span class="price-val">{displayPrice}</span>
-                {#if dish.sizes}
-                  <span class="size-hint">(Reg)</span>
-                {/if}
-              </div>
+              <div class="price-val">₹{displayPrice}</div>
 
               {#if APP_CONFIG.isOrderingEnabled}
                 <div class="action-slot" on:click|stopPropagation role="none">
@@ -138,6 +108,10 @@
                       <i class="lni lni-plus" aria-hidden="true"></i>
                       <span>ADD</span>
                     </button>
+                  {/if}
+
+                  {#if hasCustom}
+                    <span class="custom-note">customisable</span>
                   {/if}
                 </div>
               {/if}
@@ -162,24 +136,14 @@
     padding: 0 16px 12px;
   }
 
-  .eyebrow-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--accent-gold-light);
-    color: var(--accent-gold);
+  .spotlight-eyebrow {
     font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 3px 9px;
-    border-radius: var(--radius-pill);
-    margin-bottom: 4px;
-  }
-
-  .icon-sparkle {
-    font-size: 0.85rem;
+    letter-spacing: 0.05em;
     color: var(--accent-gold);
+    display: block;
+    margin-bottom: 2px;
   }
 
   .spotlight-title {
@@ -211,12 +175,12 @@
   }
 
   .spotlight-card {
-    flex: 0 0 250px;
+    flex: 0 0 240px;
     scroll-snap-align: start;
     background: #FFFFFF;
     border-radius: var(--radius-lg);
     border: 1px solid var(--ios-separator);
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
     cursor: pointer;
     display: flex;
@@ -237,7 +201,7 @@
   .card-media {
     position: relative;
     width: 100%;
-    height: 140px;
+    height: 135px;
     background: var(--ios-fill);
     overflow: hidden;
   }
@@ -253,76 +217,6 @@
     transform: scale(1.05);
   }
 
-  .media-gradient {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%);
-    pointer-events: none;
-  }
-
-  .media-top-tags {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    right: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 2;
-  }
-
-  .tag-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    border-radius: var(--radius-pill);
-    padding: 3px 8px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  .tag-popular {
-    background: rgba(234, 88, 12, 0.9);
-    color: #FFFFFF;
-    box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3);
-  }
-
-  .tag-rating {
-    background: rgba(18, 18, 23, 0.78);
-    color: #FFFFFF;
-    border: 0.5px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .media-bottom-meta {
-    position: absolute;
-    bottom: 8px;
-    left: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    z-index: 2;
-  }
-
-  .prep-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(0, 0, 0, 0.65);
-    color: #FFFFFF;
-    font-size: 0.64rem;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: var(--radius-pill);
-    backdrop-filter: blur(6px);
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    font-variant-numeric: tabular-nums;
-  }
-
   .card-details {
     padding: 12px 14px 14px;
     display: flex;
@@ -330,11 +224,18 @@
     flex: 1;
   }
 
+  .dish-meta-line {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 4px;
+  }
+
   .dish-name {
-    font-size: 0.96rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 0 0 4px;
+    margin: 0;
     line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
@@ -344,7 +245,7 @@
   .dish-snippet {
     font-size: 0.78rem;
     color: var(--text-muted);
-    line-height: 1.38;
+    line-height: 1.4;
     margin: 0 0 10px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -361,59 +262,45 @@
     border-top: 1px solid var(--ios-separator-light);
   }
 
-  .price-box {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 2px;
-    color: var(--text-primary);
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  .price-symbol {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--accent-gold);
-  }
-
   .price-val {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 800;
+    color: var(--text-primary);
     letter-spacing: -0.02em;
   }
 
-  .size-hint {
-    font-size: 0.68rem;
-    color: var(--text-muted);
-    font-weight: 600;
+  .action-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
   }
 
-  .action-slot {
-    flex-shrink: 0 !important;
+  .custom-note {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: lowercase;
   }
 
   @media (max-width: 380px) {
     .spotlight-card {
-      flex: 0 0 220px;
+      flex: 0 0 215px;
     }
 
     .card-media {
-      height: 125px;
+      height: 120px;
     }
 
     .spotlight-title {
       font-size: 1.1rem;
     }
-
-    .eyebrow-pill {
-      font-size: 0.66rem;
-      padding: 2px 7px;
-    }
   }
 
   @media (min-width: 600px) {
     .spotlight-card {
-      flex: 0 0 270px;
+      flex: 0 0 260px;
     }
   }
 </style>

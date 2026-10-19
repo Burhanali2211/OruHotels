@@ -48,7 +48,7 @@
       aria-labelledby="modal-dish-heading"
       tabindex="-1"
     >
-      <!-- Grabber handle for iOS feel -->
+      <!-- Grabber bar -->
       <div class="sheet-handle-bar"></div>
 
       <!-- Close Button -->
@@ -56,60 +56,24 @@
         <i class="lni lni-close" aria-hidden="true"></i>
       </button>
 
-      <!-- Dish Image Banner -->
+      <!-- Clean Food Image -->
       <div class="sheet-media">
         <img src={dish.image} alt={dish.name} class="sheet-img" />
-        <div class="sheet-media-gradient"></div>
-
-        <!-- Floating Badges over Media -->
-        <div class="media-badges">
-          <span class="diet-dot-badge {dish.diet}">
-            <span class="dot-circle"></span>
-          </span>
-
-          {#if dish.tag || dish.popular}
-            <span class="modal-tag">
-              <i class="lni lni-tag" aria-hidden="true"></i>
-              <span>{dish.tag || 'Must Try'}</span>
-            </span>
-          {/if}
-        </div>
       </div>
 
       <!-- Details -->
       <div class="sheet-body">
         <div class="sheet-title-row">
           <div class="title-meta-left">
-            <h2 class="sheet-title" id="modal-dish-heading">{dish.name}</h2>
-            
-            <div class="meta-pills-row">
-              {#if dish.rating}
-                <span class="rating-badge">
-                  <i class="lni lni-star-fill icon-star" aria-hidden="true"></i>
-                  <span>{dish.rating}</span>
-                  {#if dish.ratingCount}
-                    <span class="rating-count">({dish.ratingCount})</span>
-                  {/if}
-                </span>
-              {/if}
-
-              {#if dish.prepTime}
-                <span class="prep-badge">
-                  <i class="lni lni-timer" aria-hidden="true"></i>
-                  <span>{dish.prepTime}</span>
-                </span>
-              {/if}
-
-              {#if dish.spiciness && dish.spiciness > 0}
-                <span class="spice-badge" title="{dish.spiciness} of 3 spicy">
-                  {#each Array(dish.spiciness) as _}
-                    <svg class="flame-svg" viewBox="0 0 24 24" width="13" height="13" fill="#EA580C" stroke="#EA580C">
-                      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-                    </svg>
-                  {/each}
-                </span>
+            <div class="modal-diet-wrap">
+              <span class="diet-dot-badge {dish.diet}">
+                <span class="dot-circle"></span>
+              </span>
+              {#if dish.popular}
+                <span class="bestseller-label">Bestseller</span>
               {/if}
             </div>
+            <h2 class="sheet-title" id="modal-dish-heading">{dish.name}</h2>
           </div>
 
           <div class="sheet-price-pill">
@@ -120,10 +84,10 @@
 
         <p class="sheet-desc">{dish.description}</p>
 
-        <!-- Pizza Size Selection (R, M, L) -->
+        <!-- Pizza Size Selection -->
         {#if dish.sizes}
           <div class="option-section">
-            <span class="option-label">Select Crust Size</span>
+            <span class="option-label">Choose Size</span>
             <div class="size-options-grid">
               {#each Object.entries(dish.sizes) as [sName, sPrice]}
                 <button
@@ -140,15 +104,15 @@
           </div>
         {/if}
 
-        <!-- Preparation Options (e.g. Fried / Grilled for Trout Fish, Cold Drink Flavors) -->
+        <!-- Preparation Options (e.g. Fried vs Grilled for Trout Fish) -->
         {#if dish.options && dish.options.length > 0}
           <div class="option-section">
-            <span class="option-label">Select Preparation / Flavor</span>
-            <div class="spice-chips">
+            <span class="option-label">Preparation Style</span>
+            <div class="option-chips">
               {#each dish.options as opt}
                 <button
                   type="button"
-                  class="spice-chip {selectedOption === opt ? 'active' : ''}"
+                  class="option-chip {selectedOption === opt ? 'active' : ''}"
                   on:click={() => selectedOption = opt}
                 >
                   {opt}
@@ -157,11 +121,6 @@
             </div>
           </div>
         {/if}
-
-        <div class="prep-note-box">
-          <span class="note-title">New Diamond Cafe Guarantee</span>
-          <span class="note-desc">Baked fresh to order with authentic spices, 100% real dairy mozzarella, and premium meats.</span>
-        </div>
       </div>
 
       <!-- Footer Action -->
@@ -264,38 +223,8 @@
     object-fit: cover;
   }
 
-  .sheet-media-gradient {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%);
-    pointer-events: none;
-  }
-
-  .media-badges {
-    position: absolute;
-    bottom: 12px;
-    left: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    z-index: 2;
-  }
-
-  .modal-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: #FEF3C7;
-    color: #B45309;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: var(--radius-pill);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  }
-
   .sheet-body {
-    padding: 16px 20px 20px;
+    padding: 18px 20px 20px;
   }
 
   .sheet-title-row {
@@ -303,11 +232,27 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .title-meta-left {
     flex: 1;
+    min-width: 0;
+  }
+
+  .modal-diet-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .bestseller-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #B45309;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .sheet-title {
@@ -315,60 +260,9 @@
     font-size: 1.25rem;
     font-weight: 800;
     color: var(--text-primary);
-    margin: 0 0 6px;
+    margin: 0;
     letter-spacing: -0.015em;
-  }
-
-  .meta-pills-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .rating-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--ios-fill-secondary);
-    font-size: 0.74rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-  }
-
-  .rating-count {
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  .prep-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.74rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    background: var(--ios-fill-secondary);
-    padding: 3px 8px;
-    border-radius: 6px;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .spice-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 0.8rem;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  .flame-svg {
-    display: inline-block;
-    flex-shrink: 0;
+    line-height: 1.3;
   }
 
   .sheet-price-pill {
@@ -394,20 +288,20 @@
     font-size: 0.88rem;
     color: var(--text-secondary);
     line-height: 1.5;
-    margin: 0 0 16px;
+    margin: 0 0 18px;
   }
 
   .option-section {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }
 
   .option-label {
     display: block;
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     margin-bottom: 8px;
   }
 
@@ -461,13 +355,13 @@
     margin-top: 4px;
   }
 
-  /* Spice Chips */
-  .spice-chips {
+  /* Option Chips */
+  .option-chips {
     display: flex;
     gap: 8px;
   }
 
-  .spice-chip {
+  .option-chip {
     flex: 1;
     background: var(--ios-fill-secondary);
     border: 1px solid var(--ios-separator);
@@ -481,38 +375,15 @@
     transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .spice-chip:active {
+  .option-chip:active {
     transform: scale(0.96);
   }
 
-  .spice-chip.active {
+  .option-chip.active {
     background: #121217;
     border-color: #121217;
     color: #FFFFFF;
     box-shadow: 0 2px 8px rgba(18, 18, 23, 0.2);
-  }
-
-  .prep-note-box {
-    background: var(--ios-card-subtle);
-    border: 1px dashed var(--ios-separator);
-    border-radius: var(--radius-md);
-    padding: 10px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-top: 8px;
-  }
-
-  .note-title {
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  .note-desc {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    line-height: 1.35;
   }
 
   .sheet-footer {

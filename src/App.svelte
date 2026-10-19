@@ -2,7 +2,6 @@
   import menuData from './data/menu.json';
   import {
     dietFilter,
-    quickFilter,
     activeCategory,
     searchQuery,
     viewMode,
@@ -14,7 +13,6 @@
   import Header from './components/Header.svelte';
   import ActiveOrderBanner from './components/ActiveOrderBanner.svelte';
   import Hero from './components/Hero.svelte';
-  import HeroSpotlight from './components/HeroSpotlight.svelte';
   import CategoryNav from './components/CategoryNav.svelte';
   import DishCard from './components/DishCard.svelte';
   import DishModal from './components/DishModal.svelte';
@@ -41,10 +39,6 @@
     // Dietary Filter
     if ($dietFilter === 'veg' && dish.diet !== 'veg') return false;
     if ($dietFilter === 'nonveg' && dish.diet !== 'nonveg') return false;
-
-    // Quick Filters
-    if ($quickFilter === 'must-try' && !dish.popular) return false;
-    if ($quickFilter === 'top-rated' && (!dish.rating || dish.rating < 4.8)) return false;
 
     // Search Query
     if ($searchQuery.trim()) {
@@ -100,10 +94,6 @@
     <!-- Search, Dietary Control & Quick Filter Chips -->
     <Hero />
 
-    <!-- Chef's Highlights Spotlight (Shows when no search is active) -->
-    {#if !$searchQuery.trim() && $quickFilter === 'all'}
-      <HeroSpotlight {dishes} />
-    {/if}
 
     <!-- Category Pills Navigation with Scroll-Spy -->
     <CategoryNav categories={navCategories} />
@@ -136,7 +126,6 @@
             on:click={() => { 
               $searchQuery = ''; 
               $dietFilter = 'all'; 
-              $quickFilter = 'all'; 
             }}
           >
             Reset All Filters
@@ -163,25 +152,17 @@
               <span class="section-count-badge">{cat.items.length} {cat.items.length === 1 ? 'item' : 'items'}</span>
             </div>
 
-            <!-- Dynamic Layout by Category -->
+            <!-- Unified Dish Stack -->
             {#if $viewMode === 'compact'}
               <div class="dish-stack compact-stack">
                 {#each cat.items as dish (dish.id)}
-                  <DishCard {dish} category={cat.id} />
-                {/each}
-              </div>
-            {:else if cat.id === 'beverages'}
-              <!-- Beverages Grid -->
-              <div class="dish-grid-beverages">
-                {#each cat.items as dish (dish.id)}
-                  <DishCard {dish} category={cat.id} />
+                  <DishCard {dish} />
                 {/each}
               </div>
             {:else}
-              <!-- Pizzas & Fish Special -->
               <div class="dish-stack">
                 {#each cat.items as dish (dish.id)}
-                  <DishCard {dish} category={cat.id} />
+                  <DishCard {dish} />
                 {/each}
               </div>
             {/if}
@@ -236,7 +217,6 @@
           aria-label="View Order Tray"
         >
           <span class="btn-label">Review Order</span>
-          <i class="lni lni-arrow-right" aria-hidden="true"></i>
         </button>
       </div>
     </div>

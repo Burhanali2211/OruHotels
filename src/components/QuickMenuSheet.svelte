@@ -158,10 +158,6 @@
                 <span class="item-price-range">₹{cat.minPrice} - ₹{cat.maxPrice}</span>
               </div>
             </div>
-
-            <div class="item-arrow">
-              <i class="lni lni-chevron-right" aria-hidden="true"></i>
-            </div>
           </button>
         {/each}
       </div>

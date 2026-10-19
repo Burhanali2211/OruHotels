@@ -1,15 +1,10 @@
 <script>
-  import { searchQuery, dietFilter, quickFilter, viewMode } from '../stores/cart.js';
+  import { searchQuery, dietFilter, viewMode } from '../stores/cart.js';
   import { hapticLight } from '../utils/haptics.js';
 
   function toggleDiet(val) {
     hapticLight();
     dietFilter.set(val);
-  }
-
-  function toggleQuickFilter(val) {
-    hapticLight();
-    quickFilter.update(curr => curr === val ? 'all' : val);
   }
 
   function toggleViewMode(mode) {
@@ -98,27 +93,6 @@
         <i class="lni lni-list" aria-hidden="true"></i>
       </button>
     </div>
-  </div>
-
-  <!-- Quick Filter Chips -->
-  <div class="quick-chips-row no-scrollbar">
-    <button
-      type="button"
-      class="chip-btn {$quickFilter === 'must-try' ? 'active' : ''}"
-      on:click={() => toggleQuickFilter('must-try')}
-    >
-      <i class="lni lni-tag chip-icon-flame" aria-hidden="true"></i>
-      <span>Must Try</span>
-    </button>
-
-    <button
-      type="button"
-      class="chip-btn {$quickFilter === 'top-rated' ? 'active' : ''}"
-      on:click={() => toggleQuickFilter('top-rated')}
-    >
-      <i class="lni lni-star-fill icon-star" aria-hidden="true"></i>
-      <span>Top Rated (4.8+)</span>
-    </button>
   </div>
 </div>
 
@@ -262,54 +236,6 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   }
 
-  /* Quick Chips */
-  .quick-chips-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 2px;
-  }
-
-  .chip-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #FFFFFF;
-    border: 1px solid var(--ios-separator);
-    border-radius: var(--radius-pill);
-    padding: 5px 12px;
-    font-family: var(--font-sans);
-    font-size: 0.76rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    cursor: pointer;
-    white-space: nowrap;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-    transition: all 0.15s ease;
-  }
-
-  .chip-btn:hover {
-    border-color: #C7C7CE;
-    color: var(--text-primary);
-  }
-
-  .chip-btn.active {
-    background: #121217;
-    border-color: #121217;
-    color: #FFFFFF;
-    box-shadow: 0 2px 6px rgba(18, 18, 23, 0.2);
-  }
-
-  .chip-icon-flame {
-    color: #EA580C;
-    font-size: 0.85rem;
-  }
-
-  .chip-btn.active .chip-icon-flame {
-    color: #FDBA74;
-  }
-
   @media (max-width: 380px) {
     .ios-controls-section {
       padding: 10px 12px 6px;
@@ -334,11 +260,6 @@
 
     .segment-icon {
       font-size: 0.85rem;
-    }
-
-    .chip-btn {
-      padding: 4px 10px;
-      font-size: 0.72rem;
     }
   }
 </style>
