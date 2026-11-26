@@ -1,5 +1,4 @@
 <script>
-  import { Check, X, Plus } from '@lucide/svelte';
   import { isReceiptOpen, activeOrder } from '../stores/cart.js';
 
   function closeReceipt() {
@@ -28,18 +27,18 @@
       tabindex="-1"
     >
       <button class="btn-sheet-close" type="button" on:click={closeReceipt} aria-label="Close">
-        <X size={16} />
+        <i class="lni lni-close" aria-hidden="true"></i>
       </button>
 
       <!-- Checkmark -->
       <div class="receipt-icon-circle">
-        <Check size={28} strokeWidth={3} />
+        <i class="lni lni-checkmark" style="font-size: 1.5rem;" aria-hidden="true"></i>
       </div>
 
       <div class="receipt-header">
         <div class="receipt-status">Order Confirmed</div>
         <h2 class="receipt-code" id="receipt-title">Order {$activeOrder.orderCode}</h2>
-        <p class="receipt-meta">Table 08 &bull; Sent to kitchen at {$activeOrder.placedAt}</p>
+        <p class="receipt-meta">Sent to kitchen at {$activeOrder.placedAt}</p>
       </div>
 
       <!-- Live tracker steps -->
@@ -48,7 +47,7 @@
           <div class="step-indicator done">✓</div>
           <div>
             <div class="step-label">Order Received</div>
-            <div class="step-time">Logged for Table 08</div>
+            <div class="step-time">Logged with kitchen</div>
           </div>
         </div>
 
@@ -63,8 +62,8 @@
         <div class="step-item">
           <div class="step-indicator pending">○</div>
           <div>
-            <div class="step-label">Serve to Table 08</div>
-            <div class="step-time">Captain will deliver to table</div>
+            <div class="step-label">Ready for Serving</div>
+            <div class="step-time">Freshly prepared &amp; hot</div>
           </div>
         </div>
       </div>
@@ -75,7 +74,11 @@
           {#each $activeOrder.items as item}
             <div class="docket-row">
               <span class="docket-qty">{item.quantity}×</span>
-              <span class="docket-name">{item.dish.name}</span>
+              <span class="docket-name">
+                {item.dish.name}
+                {#if item.size} ({item.size}){/if}
+                {#if item.option} ({item.option}){/if}
+              </span>
               <span class="docket-price">₹{item.unitPrice * item.quantity}</span>
             </div>
           {/each}
@@ -94,7 +97,7 @@
       <!-- Action -->
       <div class="receipt-footer">
         <button class="btn-apple-primary btn-apple-center" type="button" on:click={closeReceipt}>
-          <Plus size={18} strokeWidth={2.5} />
+          <i class="lni lni-plus" aria-hidden="true"></i>
           <span class="btn-label">Add More Dishes</span>
         </button>
       </div>

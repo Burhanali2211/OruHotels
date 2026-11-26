@@ -1,5 +1,10 @@
 <script>
   export let restaurant;
+
+  function openTray() {
+    hapticLight();
+    isDrawerOpen.set(true);
+  }
 </script>
 
 <header class="ios-nav-header">
@@ -91,6 +96,30 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
+  }
+
+  .brand-monogram {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #24242A 0%, #121217 100%);
+    color: var(--accent-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+  }
+
+  .monogram-icon {
+    font-size: 1.15rem;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
   .brand-icon-box {

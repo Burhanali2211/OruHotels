@@ -29,15 +29,15 @@
       aria-labelledby="modal-dish-heading"
       tabindex="-1"
     >
-      <!-- Grabber handle for iOS feel -->
+      <!-- Grabber bar -->
       <div class="sheet-handle-bar"></div>
 
       <!-- Close Button -->
       <button class="btn-sheet-close" type="button" on:click={closeModal} aria-label="Close dialog">
-        <X size={16} />
+        <i class="lni lni-close" aria-hidden="true"></i>
       </button>
 
-      <!-- Dish Image -->
+      <!-- Clean Food Image -->
       <div class="sheet-media">
         <img src={dish.image} alt={dish.name} class="sheet-img" />
       </div>
@@ -114,7 +114,7 @@
     background: #FFFFFF;
     width: 100%;
     max-width: 500px;
-    border-radius: 20px 20px 0 0;
+    border-radius: 24px 24px 0 0;
     max-height: 85vh;
     overflow-y: auto;
     position: relative;
@@ -124,7 +124,7 @@
 
   @media (min-width: 640px) {
     .ios-modal-sheet {
-      border-radius: 20px;
+      border-radius: 24px;
       max-height: 80vh;
     }
   }
@@ -137,7 +137,7 @@
   .sheet-handle-bar {
     width: 36px;
     height: 4px;
-    background: #D1D1D6;
+    background: #D1D1D8;
     border-radius: 2px;
     margin: 10px auto 4px;
   }
@@ -166,6 +166,7 @@
   }
 
   .sheet-media {
+    position: relative;
     width: 100%;
     height: 220px;
     background: var(--ios-fill);
@@ -284,7 +285,58 @@
     color: var(--text-primary);
   }
 
-  .spice-chips {
+  /* Size Selector Cards Grid */
+  .size-options-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .size-option-card {
+    background: var(--ios-fill-secondary);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.16s ease;
+  }
+
+  .size-option-card:active {
+    transform: scale(0.96);
+  }
+
+  .size-option-card.active {
+    background: #FFFFFF;
+    border-color: #121217;
+    box-shadow: 0 3px 12px rgba(18, 18, 23, 0.12);
+  }
+
+  .size-card-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .size-card-tag {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .size-card-price {
+    font-size: 0.94rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+    margin-top: 4px;
+  }
+
+  /* Option Chips */
+  .option-chips {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -322,5 +374,57 @@
   .btn-modal-dismiss:active {
     background: #E5E5EA;
     transform: scale(0.98);
+  }
+
+  @media (max-width: 440px) {
+    .sheet-body {
+      padding: 14px 16px 16px;
+    }
+
+    .sheet-title {
+      font-size: 1.15rem;
+    }
+
+    .sheet-footer {
+      padding: 12px 14px;
+      gap: 10px;
+    }
+
+    .size-option-card {
+      padding: 8px 4px;
+    }
+
+    .size-card-title {
+      font-size: 0.82rem;
+    }
+
+    .size-card-tag {
+      font-size: 0.62rem;
+    }
+
+    .size-card-price {
+      font-size: 0.88rem;
+    }
+  }
+
+  @media (max-width: 375px) {
+    .sheet-footer {
+      padding: 10px 12px;
+      gap: 8px;
+    }
+
+    .sheet-footer .btn-apple-primary {
+      padding: 0 12px;
+      font-size: 0.82rem;
+    }
+
+    .sheet-footer .btn-label {
+      font-size: 0.8rem;
+    }
+
+    .sheet-footer .btn-price-badge {
+      font-size: 0.82rem;
+      padding: 2px 7px;
+    }
   }
 </style>

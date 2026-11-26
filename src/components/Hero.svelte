@@ -36,7 +36,7 @@
 
   <!-- Apple Spotlight Style Search -->
   <div class="spotlight-search">
-    <Search size={16} class="search-icon" />
+    <i class="lni lni-search search-icon" aria-hidden="true"></i>
     <input
       type="search"
       placeholder="Search pizza, biryani, momos..."
@@ -45,8 +45,13 @@
       aria-label="Search menu"
     />
     {#if $searchQuery}
-      <button type="button" class="btn-clear" on:click={() => $searchQuery = ''} aria-label="Clear">
-        <X size={14} />
+      <button 
+        type="button" 
+        class="btn-clear" 
+        on:click={() => $searchQuery = ''} 
+        aria-label="Clear Search"
+      >
+        <i class="lni lni-close" aria-hidden="true"></i>
       </button>
     {/if}
   </div>
@@ -90,7 +95,7 @@
     padding: 14px 16px 8px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   /* Restaurant Quick Meta */
@@ -161,19 +166,22 @@
   .spotlight-search {
     display: flex;
     align-items: center;
-    background: #E5E5EA;
+    background: #FFFFFF;
+    border: 1px solid var(--ios-separator);
     border-radius: var(--radius-pill);
     padding: 0 14px;
-    height: 42px;
-    transition: background 0.15s ease, box-shadow 0.15s ease;
+    height: 44px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.16s ease;
   }
 
   .spotlight-search:focus-within {
-    background: #FFFFFF;
-    box-shadow: 0 0 0 2px #000000;
+    border-color: #121217;
+    box-shadow: 0 2px 12px rgba(18, 18, 23, 0.12);
   }
 
-  :global(.search-icon) {
+  .search-icon {
+    font-size: 1.1rem;
     color: var(--text-muted);
     flex-shrink: 0;
     margin-right: 8px;
@@ -183,8 +191,8 @@
     width: 100%;
     border: none;
     background: transparent;
-    font-family: var(--font-system);
-    font-size: 0.92rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
     color: var(--text-primary);
     outline: none;
   }
@@ -204,12 +212,22 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+  }
+
+  /* Filter Controls Row */
+  .filter-controls-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   /* Native iOS Segmented Control */
   .ios-segmented-control {
+    flex: 1;
     display: flex;
-    background: #E5E5EA;
+    background: var(--ios-fill);
     border-radius: var(--radius-pill);
     padding: 3px;
   }
@@ -223,13 +241,17 @@
     background: transparent;
     border: none;
     border-radius: var(--radius-pill);
-    padding: 7px 0;
-    font-family: var(--font-system);
-    font-size: 0.82rem;
+    padding: 6px 0;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .segment-icon {
+    font-size: 0.95rem;
   }
 
   .segment-item:active {
@@ -239,6 +261,63 @@
   .segment-item.active {
     background: #FFFFFF;
     color: var(--text-primary);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14), 0 1px 1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), 0 1px 1px rgba(0, 0, 0, 0.04);
+  }
+
+  /* View Mode Switcher */
+  .view-mode-toggle {
+    display: flex;
+    background: var(--ios-fill);
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    flex-shrink: 0;
+  }
+
+  .mode-btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.16s ease;
+    font-size: 0.9rem;
+  }
+
+  .mode-btn.active {
+    background: #FFFFFF;
+    color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  }
+
+  @media (max-width: 380px) {
+    .ios-controls-section {
+      padding: 10px 12px 6px;
+      gap: 8px;
+    }
+
+    .spotlight-search {
+      height: 40px;
+      padding: 0 12px;
+    }
+
+    .search-input {
+      font-size: 0.84rem;
+    }
+
+    .segment-item {
+      font-size: 0.74rem;
+      gap: 3px;
+      padding: 5px 0;
+      white-space: nowrap !important;
+    }
+
+    .segment-icon {
+      font-size: 0.85rem;
+    }
   }
 </style>

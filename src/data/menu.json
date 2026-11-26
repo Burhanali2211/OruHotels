@@ -339,6 +339,11 @@
       "name": "Veg Fried Rice",
       "category": "rice",
       "price": 180,
+      "sizes": {
+        "Regular": 180,
+        "Medium": 330,
+        "Large": 470
+      },
       "diet": "veg",
       "popular": false,
       "description": "Stir-fried rice tossed with colorful farm carrots, french beans, green cabbage, and mild herbs.",
@@ -390,3 +395,4 @@
     }
   ]
 }
+

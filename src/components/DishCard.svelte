@@ -78,16 +78,20 @@
 </div>
 
 <style>
-  .ios-dish-card {
+  /* ==========================================================================
+     Professional Standard Restaurant Card
+     Clean, Focused, Editorial Presentation
+     ========================================================================== */
+  .dish-card {
     background: #FFFFFF;
-    border-radius: var(--radius-md);
-    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    padding: 16px 16px 16px 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    box-shadow: var(--shadow-card);
-    border: 0.5px solid var(--ios-separator);
+    gap: 16px;
+    border: 1px solid var(--ios-separator);
+    box-shadow: var(--shadow-sm);
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     outline: none;
@@ -99,11 +103,12 @@
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
   }
 
-  .ios-dish-card:focus-visible {
-    border-color: #000000;
+  .dish-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
   }
 
-  .ios-dish-card:active {
+  .dish-card:active {
     transform: scale(0.99);
   }
 
@@ -115,11 +120,12 @@
     justify-content: space-between;
   }
 
-  .card-top-meta {
+  .card-meta {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
   }
 
   .diet-badge {
@@ -148,12 +154,24 @@
     color: var(--text-secondary);
     font-size: 0.66rem;
     font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
+    color: #B45309;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .in-tray-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--accent-emerald);
+    background: var(--accent-emerald-bg);
+    padding: 1px 7px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.02em;
   }
 
   .dish-title {
-    font-size: 0.98rem;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 4px;
@@ -234,7 +252,107 @@
     transform: scale(1.04);
   }
 
-  @media (min-width: 600px) {
+  /* Compact View */
+  .dish-card-compact {
+    background: #FFFFFF;
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid var(--ios-separator);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+
+  .dish-card-compact:hover {
+    background: var(--ios-card-subtle);
+  }
+
+  .dish-card-compact:active {
+    transform: scale(0.99);
+  }
+
+  .compact-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .compact-titles {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .compact-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .compact-bestseller {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #B45309;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .compact-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .compact-price {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .compact-price .currency {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+  }
+
+  .compact-qty-pill {
+    background: #121217;
+    color: #FFFFFF;
+    font-size: 0.7rem;
+    font-weight: 800;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+
+  /* Responsive Media Queries */
+  @media (max-width: 480px) {
+    .dish-card {
+      padding: 14px 14px;
+      gap: 12px;
+    }
+
+    .dish-title {
+      font-size: 0.98rem;
+    }
+
+    .dish-desc {
+      font-size: 0.76rem;
+    }
+
     .dish-thumb-box {
       width: 96px;
       height: 96px;
