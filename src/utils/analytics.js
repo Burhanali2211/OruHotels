@@ -63,11 +63,10 @@ export function trackEvent({
 
     const isBeacon = typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function';
 
-    const isLocalOrOrupos =
-      window.location.hostname.endsWith('orupos.in') ||
+    const isLocalhost =
       window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1';
-    const primaryUrl = isLocalOrOrupos
+    const primaryUrl = isLocalhost
       ? '/api/analytics/track'
       : 'https://orupos.in/api/analytics/track';
 

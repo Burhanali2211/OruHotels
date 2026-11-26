@@ -28,11 +28,6 @@
     // Record customer visit or table QR scan in real-time
     const table = getTable();
     trackEvent({ eventType: table ? 'scan' : 'visit', table });
-
-    // Smooth initial transition
-    setTimeout(() => {
-      isLoading = false;
-    }, 800);
   });
 
   // Reactive dish filtering
@@ -98,20 +93,7 @@
 
     <!-- Menu Dishes Stream -->
     <div class="menu-content-stream">
-      {#if isLoading}
-        <div class="skeleton-wrapper">
-          {#each Array(4) as _}
-            <div class="skeleton-card">
-              <div class="skeleton-img"></div>
-              <div class="skeleton-info">
-                <div class="skeleton-line title"></div>
-                <div class="skeleton-line desc"></div>
-                <div class="skeleton-line price"></div>
-              </div>
-            </div>
-          {/each}
-        </div>
-      {:else if displayedCategories.length === 0}
+      {#if displayedCategories.length === 0}
         <div class="empty-results-box">
           <div class="empty-icon-circle">
             <i class="lni lni-restaurant" style="font-size: 1.8rem;" aria-hidden="true"></i>
@@ -333,54 +315,6 @@
     gap: 10px;
   }
 
-  /* Skeleton Loading */
-  .skeleton-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .skeleton-card {
-    display: flex;
-    gap: 16px;
-    padding: 14px;
-    background: #FFFFFF;
-    border-radius: var(--radius-md);
-    border: 0.5px solid var(--ios-separator);
-  }
-
-  .skeleton-img {
-    width: 90px;
-    height: 90px;
-    border-radius: var(--radius-md);
-    background: var(--ios-fill);
-    animation: pulse 1.5s infinite;
-  }
-
-  .skeleton-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    justify-content: center;
-  }
-
-  .skeleton-line {
-    height: 14px;
-    background: var(--ios-fill);
-    border-radius: 4px;
-    animation: pulse 1.5s infinite;
-  }
-
-  .skeleton-line.title { width: 70%; height: 18px; }
-  .skeleton-line.desc { width: 90%; }
-  .skeleton-line.price { width: 40%; margin-top: 8px; }
-
-  @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.4; }
-    100% { opacity: 1; }
-  }
 
   .empty-results-box {
     text-align: center;
