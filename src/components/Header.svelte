@@ -1,37 +1,69 @@
 <script>
-  import { ShoppingBag } from '@lucide/svelte';
-  import { cartSummary, isDrawerOpen, APP_CONFIG } from '../stores/cart.js';
-
   export let restaurant;
 </script>
 
 <header class="ios-nav-header">
   <div class="nav-inner">
-    <!-- Brand & Table -->
+    <!-- Brand & Subtitle -->
     <div class="brand-group">
-      <div class="brand-title">{restaurant.name}</div>
-      {#if APP_CONFIG.isOrderingEnabled}
-        <div class="table-badge">
-          <span class="live-dot"></span>
-          <span>{restaurant.table}</span>
-        </div>
-      {/if}
+      <div class="brand-icon-box" title="New Diamond Cafe">
+        <svg
+          class="diamond-icon-svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+        >
+          <path
+            d="M6 3H18L22 9L12 22L2 9L6 3Z"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M2 9H22"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M12 22L7 9L10 3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M12 22L17 9L14 3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1 class="brand-title">{restaurant.name}</h1>
+        {#if restaurant.subtitle}
+          <span class="brand-subtitle">{restaurant.subtitle}</span>
+        {/if}
+      </div>
     </div>
 
-    <!-- Right Cart Trigger -->
-    {#if APP_CONFIG.isOrderingEnabled}
-      <button
-        class="btn-cart-nav"
-        type="button"
-        on:click={() => isDrawerOpen.set(true)}
-        aria-label="View Order Tray"
-      >
-        <ShoppingBag size={18} strokeWidth={2.2} />
-        {#if $cartSummary.totalItems > 0}
-          <span class="cart-pill-badge">{$cartSummary.totalItems}</span>
-        {/if}
-      </button>
-    {/if}
+    <!-- Digital Menu / OruPOS Badge Link -->
+    <a
+      href="https://orupos.in"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="menu-status-badge"
+      title="Powered by OruPOS • Modern Hospitality Software"
+    >
+      <span class="pulse-dot"></span>
+      <span class="badge-text">by <strong>orupos.in</strong></span>
+    </a>
   </div>
 </header>
 
@@ -40,11 +72,11 @@
     position: sticky;
     top: 0;
     z-index: 800;
-    background: rgba(242, 242, 247, 0.85);
+    background: rgba(242, 242, 247, 0.92);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 0.5px solid var(--ios-separator);
-    padding: 12px 16px;
+    padding: 10px 16px;
   }
 
   .nav-inner {
@@ -61,69 +93,76 @@
     gap: 10px;
   }
 
+  .brand-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(145deg, #18181B 0%, #09090B 100%);
+    color: #F8FAFC;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .diamond-icon-svg {
+    filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.2));
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
   .brand-title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: var(--text-primary);
+    margin: 0;
+    line-height: 1.15;
   }
 
-  .table-badge {
+  .brand-subtitle {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .menu-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     background: #FFFFFF;
     border: 0.5px solid var(--ios-separator);
     border-radius: var(--radius-pill);
-    padding: 4px 10px;
-    font-size: 0.76rem;
-    font-weight: 600;
+    padding: 5px 12px;
+    font-size: 0.74rem;
     color: var(--text-secondary);
+    text-decoration: none;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: all 0.15s ease;
   }
 
-  .live-dot {
+  .menu-status-badge:hover {
+    background: #000000;
+    color: #FFFFFF;
+    border-color: #000000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .badge-text strong {
+    font-weight: 700;
+  }
+
+  .pulse-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--accent-emerald);
-  }
-
-  .btn-cart-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #FFFFFF;
-    border: 0.5px solid var(--ios-separator);
-    color: var(--text-primary);
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    transition: transform 0.15s ease;
-  }
-
-  .btn-cart-nav:active {
-    transform: scale(0.92);
-  }
-
-  .cart-pill-badge {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    background: #000000;
-    color: #FFFFFF;
-    font-size: 0.68rem;
-    font-weight: 700;
-    min-width: 18px;
-    height: 18px;
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 4px;
-    border: 2px solid #FFFFFF;
   }
 </style>

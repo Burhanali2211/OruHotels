@@ -3,13 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>DiamondCafe • Dining &amp; Kitchen |</title>
-    <meta name="description" content="Dine-in contactless digital menu for DiamondCafe Table 08." />
+    <title>New Diamond Cafe • Dine-In Digital Menu</title>
+    <meta name="description" content="Browse our dine-in digital food and beverage menu at New Diamond Cafe, Chattergam." />
+    <meta name="author" content="orupos.in" />
 
     <!-- Google Fonts: Cormorant Garamond (Editorial Luxury) & Plus Jakarta Sans (Precision UI) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- OruPos Live Traffic & QR Scan Analytics Tracker -->
+    <script id="orupos-analytics-tracker">
+      (function() {
+        try {
+          var h = window.location.hostname;
+          var slug = (h.indexOf('.orupos.in') !== -1 && h.split('.')[0] !== 'www') ? h.split('.')[0] : 'diamondcafe';
+          var p = new URLSearchParams(window.location.search);
+          var tbl = p.get('table') || p.get('t');
+          var payload = JSON.stringify({
+            slug: slug,
+            table: tbl || undefined,
+            path: window.location.pathname || '/',
+            eventType: tbl ? 'scan' : 'visit',
+            timestamp: Date.now()
+          });
+          var isBeacon = typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function';
+          var isLocalOrOrupos = h.indexOf('orupos.in') !== -1 || h === 'localhost' || h === '127.0.0.1';
+          var url = isLocalOrOrupos ? '/api/analytics/track' : 'https://orupos.in/api/analytics/track';
+
+          if (isBeacon) {
+            navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }));
+          } else {
+            fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: payload,
+              keepalive: true,
+              mode: 'cors'
+            }).catch(function(){});
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

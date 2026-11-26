@@ -1,40 +1,12 @@
 <script>
-  import { Plus, Minus, Leaf, Beef } from '@lucide/svelte';
-  import { cart, addToCart, updateQuantity, selectedDish, APP_CONFIG } from '../stores/cart.js';
-  import { hapticLight } from '../utils/haptics.js';
+  import { Leaf, Beef } from '@lucide/svelte';
+  import { selectedDish } from '../stores/cart.js';
+  import { trackDishClick } from '../utils/analytics.js';
 
   export let dish;
 
-  $: cartEntries = Object.values($cart).filter(entry => entry.dish.id === dish.id);
-  $: currentQty = cartEntries.reduce((sum, e) => sum + e.quantity, 0);
-
-  function handleAdd(e) {
-    e.stopPropagation();
-    hapticLight();
-    addToCart(dish, 1, dish.spiceLevels?.[0] || '', []);
-  }
-
-  function handleDecrease(e) {
-    e.stopPropagation();
-    hapticLight();
-    const entry = cartEntries[0];
-    if (entry) {
-      updateQuantity(entry.key, -1);
-    }
-  }
-
-  function handleIncrease(e) {
-    e.stopPropagation();
-    hapticLight();
-    const entry = cartEntries[0];
-    if (entry) {
-      updateQuantity(entry.key, 1);
-    } else {
-      addToCart(dish, 1, dish.spiceLevels?.[0] || '', []);
-    }
-  }
-
   function openModal() {
+    trackDishClick(dish);
     selectedDish.set(dish);
   }
 
@@ -58,9 +30,15 @@
   <div class="card-info">
     <div class="card-top-meta">
       {#if dish.diet === 'veg'}
-        <Leaf size={14} class="icon-veg" />
+        <span class="diet-badge diet-veg" title="Vegetarian">
+          <Leaf size={12} class="icon-veg" />
+          <span class="diet-label">VEG</span>
+        </span>
       {:else if dish.diet === 'nonveg'}
-        <Beef size={14} class="icon-nonveg" />
+        <span class="diet-badge diet-nonveg" title="Non-Vegetarian">
+          <Beef size={12} class="icon-nonveg" />
+          <span class="diet-label">NON-VEG</span>
+        </span>
       {/if}
       {#if dish.popular}
         <span class="badge-pop">Must Try</span>
@@ -71,40 +49,31 @@
 
     <p class="dish-desc">{dish.description}</p>
 
-    <div class="price-tag">₹{dish.price}</div>
-  </div>
-
-  <!-- Right: Photo & Stepper Action -->
-  <div class="card-action-side">
-    <div class="dish-thumb-box">
-      <img
-        src={dish.image}
-        alt={dish.name}
-        class="dish-thumb"
-        loading="lazy"
-      />
-    </div>
-
-    <div class="card-button-slot">
-      {#if APP_CONFIG.isOrderingEnabled}
-        {#if currentQty > 0}
-          <div class="ios-stepper" role="group" aria-label="Quantity stepper">
-            <button type="button" on:click={handleDecrease} aria-label="Decrease">
-              <Minus size={12} strokeWidth={2.5} />
-            </button>
-            <span>{currentQty}</span>
-            <button type="button" on:click={handleIncrease} aria-label="Increase">
-              <Plus size={12} strokeWidth={2.5} />
-            </button>
-          </div>
-        {:else}
-          <button type="button" class="btn-ios-add" on:click={handleAdd}>
-            <Plus size={13} strokeWidth={2.5} />
-            <span>ADD</span>
-          </button>
-        {/if}
+    <!-- Pricing / Portion Variants -->
+    <div class="pricing-area">
+      {#if dish.variants && dish.variants.length > 0}
+        <div class="variant-chips-row">
+          {#each dish.variants as v}
+            <span class="v-pill">
+              <span class="v-label">{v.shortLabel || v.label}</span>
+              <span class="v-price">₹{v.price}</span>
+            </span>
+          {/each}
+        </div>
+      {:else}
+        <div class="price-tag">₹{dish.price}</div>
       {/if}
     </div>
+  </div>
+
+  <!-- Right: Photo -->
+  <div class="dish-thumb-box">
+    <img
+      src={dish.image}
+      alt={dish.name}
+      class="dish-thumb"
+      loading="lazy"
+    />
   </div>
 </div>
 
@@ -120,8 +89,14 @@
     box-shadow: var(--shadow-card);
     border: 0.5px solid var(--ios-separator);
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     outline: none;
+    min-height: 110px;
+  }
+
+  .ios-dish-card:hover {
+    border-color: rgba(0, 0, 0, 0.18);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
   }
 
   .ios-dish-card:focus-visible {
@@ -137,6 +112,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
   }
 
   .card-top-meta {
@@ -146,10 +122,31 @@
     margin-bottom: 4px;
   }
 
+  .diet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .diet-veg {
+    background: rgba(52, 199, 89, 0.12);
+    color: #248A3D;
+  }
+
+  .diet-nonveg {
+    background: rgba(255, 59, 48, 0.12);
+    color: #D70015;
+  }
+
   .badge-pop {
     background: #F2F2F7;
     color: var(--text-secondary);
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     font-weight: 700;
     padding: 2px 6px;
     border-radius: 4px;
@@ -159,14 +156,14 @@
     font-size: 0.98rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 0 0 3px;
+    margin: 0 0 4px;
     line-height: 1.3;
   }
 
   .dish-desc {
     font-size: 0.8rem;
     color: var(--text-muted);
-    line-height: 1.4;
+    line-height: 1.38;
     margin: 0 0 8px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -174,48 +171,73 @@
     overflow: hidden;
   }
 
+  .pricing-area {
+    margin-top: 2px;
+  }
+
+  .variant-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .v-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #F2F2F7;
+    border: 0.5px solid rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-pill);
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .v-label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+  }
+
+  .v-price {
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
   .price-tag {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 800;
     color: var(--text-primary);
     letter-spacing: -0.01em;
   }
 
-  /* Right Side Photo & Button */
-  .card-action-side {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
   .dish-thumb-box {
-    width: 84px;
-    height: 84px;
+    width: 90px;
+    height: 90px;
     border-radius: 12px;
     overflow: hidden;
     background: var(--ios-fill);
     border: 0.5px solid var(--ios-separator);
+    flex-shrink: 0;
   }
 
   .dish-thumb {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.25s ease;
   }
 
-  .card-button-slot {
-    min-height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .ios-dish-card:hover .dish-thumb {
+    transform: scale(1.04);
   }
 
   @media (min-width: 600px) {
     .dish-thumb-box {
-      width: 92px;
-      height: 92px;
+      width: 96px;
+      height: 96px;
     }
   }
 </style>

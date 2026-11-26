@@ -2,34 +2,30 @@
   import menuData from './data/menu.json';
   import {
     dietFilter,
-    activeCategory,
-    searchQuery,
-    cartSummary,
-    isDrawerOpen,
-    APP_CONFIG
+    searchQuery
   } from './stores/cart.js';
 
   import Header from './components/Header.svelte';
-  import ActiveOrderBanner from './components/ActiveOrderBanner.svelte';
   import Hero from './components/Hero.svelte';
   import CategoryNav from './components/CategoryNav.svelte';
   import DishCard from './components/DishCard.svelte';
   import DishModal from './components/DishModal.svelte';
-  import OrderDrawer from './components/OrderDrawer.svelte';
-  import OrderReceiptModal from './components/OrderReceiptModal.svelte';
-  import Toast from './components/Toast.svelte';
-  import { ShoppingBag, ArrowRight } from '@lucide/svelte';
   import { onMount } from 'svelte';
+  import { trackEvent, getTable } from './utils/analytics.js';
 
   const { restaurant, categories, dishes } = menuData;
 
   let isLoading = true;
 
   onMount(() => {
-    // Simulate 1.5s network request for premium feel
+    // Record customer visit or table QR scan in real-time
+    const table = getTable();
+    trackEvent({ eventType: table ? 'scan' : 'visit', table });
+
+    // Smooth initial transition
     setTimeout(() => {
       isLoading = false;
-    }, 1200);
+    }, 800);
   });
 
   // Reactive dish filtering
@@ -61,9 +57,6 @@
 <div class="oru-app-wrapper">
   <!-- Top Header Navigation -->
   <Header {restaurant} />
-
-  <!-- Active Order Banner -->
-  <ActiveOrderBanner />
 
   <main>
     <!-- Search and Segmented Dietary Control -->
@@ -104,7 +97,7 @@
           <section class="menu-section" id="section-{cat.id}">
             <div class="section-header">
               <h2 class="section-title">{cat.name}</h2>
-              <span class="section-badge">{cat.items.length}</span>
+              <span class="section-badge">{cat.items.length} {cat.items.length === 1 ? 'dish' : 'dishes'}</span>
             </div>
 
             <div class="dish-stack">
@@ -117,53 +110,101 @@
       {/if}
     </div>
 
-    <!-- Minimalist Footer -->
+    <!-- Restaurant Operational Details & Clean Tech Credits -->
     <footer class="app-footer">
-      <div class="footer-title">{restaurant.name}</div>
-      <div class="footer-sub">Dine-In Digital Menu</div>
-      <div class="footer-branding">
-        Powered by <span class="brand-highlight">Easy IO Technologies</span>
+      <!-- Restaurant Contact & Venue Details -->
+      <div class="restaurant-venue-card">
+        <div class="venue-brand-row">
+          <div class="venue-logo-box">
+            <svg class="venue-diamond-svg" viewBox="0 0 24 24" fill="none" width="16" height="16">
+              <path d="M6 3H18L22 9L12 22L2 9L6 3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 9H22" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 22L7 9L10 3" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M12 22L17 9L14 3" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="venue-name">{restaurant.name}</div>
+            <div class="venue-tagline">{restaurant.tagline || 'Cafe & Fine Dining'}</div>
+          </div>
+        </div>
+
+        <div class="venue-address-line">
+          <span>{restaurant.location}</span>
+        </div>
+
+        {#if restaurant.phones}
+          <div class="venue-contact-section">
+            <span class="contact-section-label">Table Service & Home Delivery</span>
+            <div class="phone-actions-grid">
+              {#each restaurant.phones as ph}
+                <a href="tel:{ph}" class="phone-action-btn">
+                  <span>Call {ph}</span>
+                </a>
+              {/each}
+            </div>
+          </div>
+        {/if}
+      </div>
+
+      <!-- Clean Hospitality Technology Attribution & EasyIO Technologies Backlink -->
+      <div class="hospitality-platform-credit">
+        <div class="credit-main-row">
+          <div class="credit-unit">
+            <span class="credit-dot"></span>
+            <span class="credit-text">Menu powered by</span>
+            <a
+              href="https://orupos.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="brand-anchor orupos-link"
+              title="OruPOS • Hospitality Digital Systems & POS"
+            >
+              orupos.in
+            </a>
+          </div>
+
+          <span class="credit-sep">•</span>
+
+          <div class="credit-unit">
+            <span class="credit-text">Engineered by</span>
+            <a
+              href="https://easyio.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="brand-anchor easyio-link"
+              title="EasyIO Technologies • Enterprise Software & Platforms"
+            >
+              EasyIO Technologies
+            </a>
+          </div>
+        </div>
+
+        <div class="hotelier-action-bar">
+          <span class="hotelier-prompt">Empowering hotels, cafes & restaurants with digital QR dining</span>
+          <a
+            href="https://orupos.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hotelier-action-btn"
+          >
+            <span>Launch Your Menu</span>
+            <span class="arrow-sym">→</span>
+          </a>
+        </div>
       </div>
     </footer>
   </main>
 
-  <!-- iOS Sticky Bottom Bar -->
-  {#if APP_CONFIG.isOrderingEnabled && $cartSummary.totalItems > 0 && !$isDrawerOpen}
-    <div class="ios-bottom-bar">
-      <div class="bottom-bar-inner">
-        <div class="bar-order-info">
-          <div class="bar-items">
-            <ShoppingBag size={14} strokeWidth={2.5} class="bag-icon" />
-            <span>{$cartSummary.totalItems} {$cartSummary.totalItems === 1 ? 'item' : 'items'}</span>
-          </div>
-          <div class="bar-total">₹{$cartSummary.grandTotal}</div>
-        </div>
-
-        <button 
-          class="btn-apple-primary btn-apple-small"
-          type="button"
-          on:click={() => isDrawerOpen.set(true)}
-          aria-label="View Order Tray"
-        >
-          <span class="btn-label">View Order</span>
-          <ArrowRight size={16} strokeWidth={2.5} />
-        </button>
-      </div>
-    </div>
-  {/if}
-
-  <!-- Modals & Drawers -->
+  <!-- Dish Detail Modal -->
   <DishModal />
-  <OrderDrawer />
-  <OrderReceiptModal />
-  <Toast />
 </div>
 
 <style>
   .menu-content-stream {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 12px 16px 36px;
+    padding: 12px 16px 28px;
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -194,7 +235,7 @@
     font-weight: 700;
     color: var(--text-muted);
     background: var(--ios-fill);
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: var(--radius-pill);
   }
 
@@ -215,13 +256,13 @@
     gap: 16px;
     padding: 12px;
     background: #FFFFFF;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     border: 0.5px solid var(--ios-separator);
   }
 
   .skeleton-img {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     border-radius: var(--radius-md);
     background: var(--ios-fill);
     animation: pulse 1.5s infinite;
@@ -271,64 +312,212 @@
     margin-bottom: 16px;
   }
 
-  /* Bottom Bar Internal */
-  .bar-order-info {
+  /* Restaurant Operational Details & Clean Tech Credits */
+  .app-footer {
+    padding: 16px 16px 40px;
+    max-width: var(--max-width);
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 16px;
   }
 
-  .bar-items {
+  .restaurant-venue-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 20px 18px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  }
+
+  .venue-brand-row {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .venue-logo-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #18181B 0%, #09090B 100%);
+    color: #F8FAFC;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .venue-name {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .venue-tagline {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .venue-address-line {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F1F5F9;
+    margin-bottom: 12px;
+  }
+
+  .venue-contact-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .contact-section-label {
+    font-size: 0.68rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    margin-bottom: 2px;
   }
 
-  :global(.bag-icon) {
-    color: var(--text-muted);
+  .phone-actions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
-  .bar-total {
-    font-size: 1.15rem;
-    font-weight: 800;
+  .phone-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
     color: var(--text-primary);
-    letter-spacing: -0.02em;
+    text-decoration: none;
+    transition: all 0.15s ease;
   }
 
-  /* Footer */
-  .app-footer {
-    text-align: center;
-    padding: 30px 16px 10px;
-    color: var(--text-muted);
+  .phone-action-btn:hover {
+    background: #0F172A;
+    color: #FFFFFF;
+    border-color: #0F172A;
   }
 
-  .footer-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-secondary);
+  /* Hospitality Platform Credit & EasyIO Technologies Backlink */
+  .hospitality-platform-credit {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .footer-sub {
-    font-size: 0.74rem;
-    margin-top: 2px;
+  .credit-main-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: #64748B;
   }
 
-  .footer-branding {
-    font-size: 0.7rem;
-    margin-top: 16px;
-    opacity: 0.7;
-    letter-spacing: 0.02em;
+  .credit-unit {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
   }
 
-  .brand-highlight {
-    font-weight: 700;
-    color: var(--ios-blue);
+  .credit-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+  }
+
+  .credit-sep {
+    color: #CBD5E1;
+  }
+
+  .brand-anchor {
+    font-weight: 750;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .orupos-link {
+    color: #0F172A;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.25);
+  }
+
+  .orupos-link:hover {
+    color: #047857;
+    border-bottom-color: #047857;
+  }
+
+  .easyio-link {
+    color: #2563EB;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.25);
+  }
+
+  .easyio-link:hover {
+    color: #1D4ED8;
+    border-bottom-color: #1D4ED8;
+  }
+
+  .hotelier-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #E2E8F0;
+    font-size: 0.72rem;
+  }
+
+  .hotelier-prompt {
+    color: #64748B;
+  }
+
+  .hotelier-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #0F172A;
+    font-weight: 750;
+    text-decoration: none;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+  }
+
+  .hotelier-action-btn:hover {
+    background: #0F172A;
+    color: #FFFFFF;
+    border-color: #0F172A;
+  }
+
+  .arrow-sym {
+    transition: transform 0.15s ease;
+  }
+
+  .hotelier-action-btn:hover .arrow-sym {
+    transform: translateX(2px);
   }
 
   @media (min-width: 600px) {
@@ -336,6 +525,10 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
+    }
+
+    .phone-actions-grid {
+      justify-content: flex-start;
     }
   }
 </style>

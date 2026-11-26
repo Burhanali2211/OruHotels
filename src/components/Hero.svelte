@@ -1,15 +1,45 @@
 <script>
-  import { Search, X, Leaf, Beef } from '@lucide/svelte';
+  import { Search, X, Leaf, Beef, MapPin, Phone, Bike } from '@lucide/svelte';
   import { searchQuery, dietFilter } from '../stores/cart.js';
+  import { trackSearch } from '../utils/analytics.js';
+  import menuData from '../data/menu.json';
+
+  const { restaurant } = menuData;
+
+  let searchTimeout;
+  $: if ($searchQuery && $searchQuery.trim().length >= 3) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      trackSearch($searchQuery);
+    }, 1200);
+  }
 </script>
 
 <div class="ios-controls-section">
+  <!-- Minimalist Restaurant Info Bar -->
+  <div class="restaurant-banner-meta">
+    <div class="meta-location">
+      <MapPin size={13} class="icon-loc" />
+      <span>{restaurant.location}</span>
+    </div>
+    <div class="meta-actions">
+      <a href="tel:{restaurant.phone}" class="meta-call-chip" title="Call for orders and enquiries">
+        <Phone size={12} />
+        <span>{restaurant.phone}</span>
+      </a>
+      <span class="meta-delivery-chip">
+        <Bike size={12} />
+        <span>Free Delivery</span>
+      </span>
+    </div>
+  </div>
+
   <!-- Apple Spotlight Style Search -->
   <div class="spotlight-search">
     <Search size={16} class="search-icon" />
     <input
       type="search"
-      placeholder="Search dishes..."
+      placeholder="Search pizza, biryani, momos..."
       bind:value={$searchQuery}
       class="search-input"
       aria-label="Search menu"
@@ -30,7 +60,7 @@
       role="tab"
       aria-selected={$dietFilter === 'all'}
     >
-      All
+      All Items
     </button>
     <button
       type="button"
@@ -40,7 +70,7 @@
       aria-selected={$dietFilter === 'veg'}
     >
       <Leaf size={14} class="icon-veg" />
-      <span>Veg</span>
+      <span>Pure Veg</span>
     </button>
     <button
       type="button"
@@ -57,10 +87,74 @@
 
 <style>
   .ios-controls-section {
-    padding: 16px 16px 10px;
+    padding: 14px 16px 8px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+  }
+
+  /* Restaurant Quick Meta */
+  .restaurant-banner-meta {
+    background: #FFFFFF;
+    border: 0.5px solid var(--ios-separator);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+
+  .meta-location {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  :global(.icon-loc) {
+    color: var(--accent-red);
+    flex-shrink: 0;
+  }
+
+  .meta-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-call-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #000000;
+    color: #FFFFFF;
+    border-radius: var(--radius-pill);
+    padding: 3px 9px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .meta-call-chip:hover {
+    opacity: 0.85;
+  }
+
+  .meta-delivery-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(52, 199, 89, 0.12);
+    color: #248A3D;
+    border-radius: var(--radius-pill);
+    padding: 3px 9px;
+    font-size: 0.72rem;
+    font-weight: 700;
   }
 
   /* Spotlight Search */

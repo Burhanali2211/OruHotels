@@ -1,17 +1,8 @@
 <script>
-  import { X, Plus, Minus, Leaf, Beef } from '@lucide/svelte';
-  import { selectedDish, addToCart, APP_CONFIG } from '../stores/cart.js';
-  import { hapticLight } from '../utils/haptics.js';
+  import { X, Leaf, Beef } from '@lucide/svelte';
+  import { selectedDish } from '../stores/cart.js';
 
   $: dish = $selectedDish;
-
-  let quantity = 1;
-  let selectedSpice = '';
-
-  $: if (dish) {
-    quantity = 1;
-    selectedSpice = dish.spiceLevels?.[0] || '';
-  }
 
   function closeModal() {
     selectedDish.set(null);
@@ -19,13 +10,6 @@
 
   function handleBackdropKey(e) {
     if (e.key === 'Escape') closeModal();
-  }
-
-  function handleConfirmAdd() {
-    if (!dish) return;
-    hapticLight();
-    addToCart(dish, quantity, selectedSpice, []);
-    closeModal();
   }
 </script>
 
@@ -61,60 +45,66 @@
       <!-- Details -->
       <div class="sheet-body">
         <div class="sheet-title-row">
-          <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-              {#if dish.diet === 'veg'}
-                <Leaf size={16} class="icon-veg" />
-              {:else if dish.diet === 'nonveg'}
-                <Beef size={16} class="icon-nonveg" />
-              {/if}
-              <span class="sheet-price">₹{dish.price}</span>
-            </div>
-            <h2 class="sheet-title" id="modal-dish-heading">{dish.name}</h2>
+          <div class="meta-tags-row">
+            {#if dish.diet === 'veg'}
+              <span class="diet-badge diet-veg">
+                <Leaf size={14} class="icon-veg" />
+                <span>Vegetarian</span>
+              </span>
+            {:else if dish.diet === 'nonveg'}
+              <span class="diet-badge diet-nonveg">
+                <Beef size={14} class="icon-nonveg" />
+                <span>Non-Vegetarian</span>
+              </span>
+            {/if}
+            {#if dish.popular}
+              <span class="badge-pop">Must Try</span>
+            {/if}
           </div>
+          <h2 class="sheet-title" id="modal-dish-heading">{dish.name}</h2>
+          {#if dish.variants && dish.variants.length > 0}
+            <div class="sheet-price">From ₹{dish.price}</div>
+          {:else}
+            <div class="sheet-price">₹{dish.price}</div>
+          {/if}
         </div>
 
         <p class="sheet-desc">{dish.description}</p>
 
-        <!-- Spice Level Selection if applicable -->
+        <!-- Portions & Sizing Breakdown -->
+        {#if dish.variants && dish.variants.length > 0}
+          <div class="option-section">
+            <span class="option-label">Available Sizes &amp; Portions</span>
+            <div class="variant-list">
+              {#each dish.variants as v}
+                <div class="variant-item-card">
+                  <span class="variant-item-label">{v.label}</span>
+                  <span class="variant-item-price">₹{v.price}</span>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        <!-- Informational Spice Preparation if present -->
         {#if dish.spiceLevels && dish.spiceLevels.length > 0}
           <div class="option-section">
-            <span class="option-label">Select Spice Level</span>
+            <span class="option-label">Spice Levels Available</span>
             <div class="spice-chips">
               {#each dish.spiceLevels as spice}
-                <button
-                  type="button"
-                  class="spice-chip {selectedSpice === spice ? 'active' : ''}"
-                  on:click={() => selectedSpice = spice}
-                >
-                  {spice}
-                </button>
+                <span class="spice-chip-info">{spice}</span>
               {/each}
             </div>
           </div>
         {/if}
       </div>
 
-      <!-- Footer Action -->
-      {#if APP_CONFIG.isOrderingEnabled}
-        <div class="sheet-footer">
-          <div class="ios-stepper stepper-sheet">
-            <button type="button" on:click={() => quantity = Math.max(1, quantity - 1)} aria-label="Decrease">
-              <Minus size={16} strokeWidth={2.5} />
-            </button>
-            <span>{quantity}</span>
-            <button type="button" on:click={() => quantity++} aria-label="Increase">
-              <Plus size={16} strokeWidth={2.5} />
-            </button>
-          </div>
-
-          <button class="btn-apple-primary" type="button" on:click={handleConfirmAdd}>
-            <span class="btn-label">Add to Order</span>
-            <span class="btn-price-badge">₹{dish.price * quantity}</span>
-          </button>
-        </div>
-      {/if}
-
+      <!-- Simple Dismiss Footer -->
+      <div class="sheet-footer">
+        <button class="btn-modal-dismiss" type="button" on:click={closeModal}>
+          Close
+        </button>
+      </div>
     </div>
   </div>
 {/if}
@@ -157,21 +147,27 @@
     top: 14px;
     right: 14px;
     z-index: 10;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(0, 0, 0, 0.5);
+    color: #FFFFFF;
     border: none;
-    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: transform 0.15s ease;
+  }
+
+  .btn-sheet-close:active {
+    transform: scale(0.9);
   }
 
   .sheet-media {
     width: 100%;
-    height: 200px;
+    height: 220px;
     background: var(--ios-fill);
     overflow: hidden;
   }
@@ -183,82 +179,148 @@
   }
 
   .sheet-body {
-    padding: 16px 20px 20px;
+    padding: 18px 20px 14px;
   }
 
-  .sheet-title-row {
-    margin-bottom: 6px;
+  .meta-tags-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
   }
 
-  .sheet-price {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--text-primary);
+  .diet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .diet-veg {
+    background: rgba(52, 199, 89, 0.12);
+    color: #248A3D;
+  }
+
+  .diet-nonveg {
+    background: rgba(255, 59, 48, 0.12);
+    color: #D70015;
+  }
+
+  .badge-pop {
+    background: #F2F2F7;
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
   }
 
   .sheet-title {
-    font-size: 1.3rem;
-    font-weight: 700;
+    font-size: 1.35rem;
+    font-weight: 800;
     color: var(--text-primary);
-    margin: 0;
+    margin: 0 0 6px;
+    line-height: 1.25;
+  }
+
+  .sheet-price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 12px;
   }
 
   .sheet-desc {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     color: var(--text-secondary);
-    line-height: 1.45;
+    line-height: 1.5;
     margin: 0 0 16px;
   }
 
   .option-section {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    padding-top: 14px;
+    border-top: 0.5px solid var(--ios-separator);
   }
 
   .option-label {
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+  }
+
+  .variant-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .variant-item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #F2F2F7;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    border: 0.5px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .variant-item-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .variant-item-price {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-primary);
   }
 
   .spice-chips {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
   }
 
-  .spice-chip {
-    flex: 1;
+  .spice-chip-info {
     background: var(--ios-fill);
-    border: 1px solid transparent;
     border-radius: var(--radius-pill);
-    padding: 8px 14px;
+    padding: 6px 14px;
     font-family: var(--font-system);
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .spice-chip:active {
-    transform: scale(0.96);
-  }
-
-  .spice-chip.active {
-    background: #000000;
-    color: #FFFFFF;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
 
   .sheet-footer {
-    padding: 14px 20px;
-    border-top: 0.5px solid var(--ios-separator);
+    padding: 12px 20px 20px;
     background: #FFFFFF;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  }
+
+  .btn-modal-dismiss {
+    width: 100%;
+    background: #F2F2F7;
+    color: var(--text-primary);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 14px 20px;
+    font-family: var(--font-system);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-modal-dismiss:active {
+    background: #E5E5EA;
+    transform: scale(0.98);
   }
 </style>

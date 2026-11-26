@@ -5,6 +5,21 @@ export const APP_CONFIG = {
   isOrderingEnabled: false
 };
 
+function getInitialTable() {
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    const tbl = params.get('table') || params.get('t');
+    if (tbl) return tbl.trim();
+    if (window.location.hash) {
+      const match = window.location.hash.match(/(?:table|t)=([^&]+)/i);
+      if (match) return decodeURIComponent(match[1]).trim();
+    }
+  }
+  return '08';
+}
+
+export const tableNumber = writable(getInitialTable());
+
 // Cart store: { [cartKey]: { key, dish, quantity, spiceLevel, extras, unitPrice } }
 export const cart = writable({});
 

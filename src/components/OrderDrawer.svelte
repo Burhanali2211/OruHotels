@@ -1,7 +1,8 @@
 <script>
   import { X, Trash2, Plus, Minus, ShoppingBag } from '@lucide/svelte';
-  import { isDrawerOpen, isReceiptOpen, cartSummary, updateQuantity, removeItem, clearCart, activeOrder } from '../stores/cart.js';
+  import { isDrawerOpen, isReceiptOpen, cartSummary, updateQuantity, removeItem, clearCart, activeOrder, tableNumber } from '../stores/cart.js';
   import { hapticLight, hapticSuccess } from '../utils/haptics.js';
+  import { trackEvent } from '../utils/analytics.js';
 
   let kitchenNote = '';
   let isTransmitting = false;
@@ -18,6 +19,14 @@
     if ($cartSummary.entries.length === 0) return;
 
     isTransmitting = true;
+
+    // Record order event in OruPos Analytics
+    trackEvent({
+      eventType: 'order',
+      table: $tableNumber,
+      orderTotal: $cartSummary.grandTotal,
+      itemsCount: $cartSummary.totalItems
+    });
 
     setTimeout(() => {
       const orderCode = `#${Math.floor(1000 + Math.random() * 9000)}`;
@@ -79,7 +88,7 @@
       <!-- Drawer Header -->
       <div class="drawer-header">
         <div>
-          <div class="table-pill">Table 08</div>
+          <div class="table-pill">Table {$tableNumber}</div>
           <h2 class="drawer-title" id="drawer-title">Your Order</h2>
         </div>
 
@@ -183,7 +192,7 @@
               {#if isTransmitting}
                 Sending to Kitchen...
               {:else}
-                Place Order • Table 08
+                Place Order • Table {$tableNumber}
               {/if}
             </span>
             <span class="btn-price-badge">₹{$cartSummary.grandTotal}</span>
