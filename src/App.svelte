@@ -141,19 +141,11 @@
             </div>
 
             <!-- Unified Dish Stack -->
-            {#if $viewMode === 'compact'}
-              <div class="dish-stack compact-stack">
-                {#each cat.items as dish (dish.id)}
-                  <DishCard {dish} />
-                {/each}
-              </div>
-            {:else}
-              <div class="dish-stack">
-                {#each cat.items as dish (dish.id)}
-                  <DishCard {dish} />
-                {/each}
-              </div>
-            {/if}
+            <div class="dish-stack">
+              {#each cat.items as dish (dish.id)}
+                <DishCard {dish} />
+              {/each}
+            </div>
           </section>
         {/each}
       {/if}
