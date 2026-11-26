@@ -188,7 +188,7 @@
         {/if}
       </div>
 
-      <!-- Clean Hospitality Technology Attribution & EasyIO Technologies Backlink -->
+      <!-- Clean Hospitality Technology Attribution & Easyio Technologies Backlink -->
       <div class="hospitality-platform-credit">
         <div class="credit-main-row">
           <div class="credit-unit">
@@ -214,9 +214,9 @@
               target="_blank"
               rel="noopener noreferrer"
               class="brand-anchor easyio-link"
-              title="EasyIO Technologies • Enterprise Software & Platforms"
+              title="Easyio Technologies • Enterprise Software & Platforms"
             >
-              EasyIO Technologies
+              Easyio Technologies
             </a>
           </div>
         </div>
@@ -522,7 +522,7 @@
     border-color: #0F172A;
   }
 
-  /* Hospitality Platform Credit & EasyIO Technologies Backlink */
+  /* Hospitality Platform Credit & Easyio Technologies Backlink */
   .hospitality-platform-credit {
     background: #F8FAFC;
     border: 1px solid #E2E8F0;
